@@ -1,0 +1,22 @@
+::ng-deep .fullpage {
+  display: flex;
+  flex-direction: column;
+
+  .fullpage-section {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .fullpage-section-fit-content {
+    width: 100vw;
+  }
+}
+
+::ng-deep body {
+  padding: 0;
+  margin: 0;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+}
