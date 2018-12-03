@@ -139,14 +139,16 @@ export class FullpageComponent implements OnInit {
     }
   }
 
+  @HostListener('window:keydown.PageUp', ['$event'])
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
   arrowUpEvent(event: KeyboardEvent) {
     this.scrollUp(event);
   }
 
-  @HostListener('window:keydown.space', ['$event'])
+  @HostListener('window:keydown.PageDown', ['$event'])
   @HostListener('window:keydown.ArrowDown', ['$event'])
+  @HostListener('window:keydown.space', ['$event'])
   arrowDownEvent(event: KeyboardEvent) {
     this.scrollDown(event);
   }
