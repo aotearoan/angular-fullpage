@@ -16,12 +16,11 @@ export class FullpageComponent implements OnInit {
   // if focus is on a form input then disable scrolling so that the form is usable
   public static ignoreWhenFocused = ['textarea', 'input'];
   public static activeClass = 'fullpage-active';
-  public static scrollSensitivity = 1500;
+  public static scrollSensitivity = 750;
 
   public activeElement;
   public previousSectionIndex: number;
   public sectionIndex: number;
-  public yPos: number;
   public scrolling: boolean;
 
   @Input() public sections: string[];
@@ -44,47 +43,37 @@ export class FullpageComponent implements OnInit {
         this.scroll(0);
       }
 
-      if (this.document.addEventListener) { /* Chrome, Safari, Firefox */
-        this.document.addEventListener('DOMMouseScroll', this.stopWheelWhenScrolling, false);
-      }
+      window.onwheel = () => !this.scrolling;
     });
-  }
-
-  private stopWheelWhenScrolling(event: Event) {
-    if (this.scrolling) {
-      if (!event) {
-        event = window.event; /* IE7, IE8, Chrome, Safari */
-      }
-      if (event.preventDefault) {
-        event.preventDefault(); /* Chrome, Safari, Firefox */
-      }
-      event.returnValue = false; /* IE7, IE8 */
-    }
   }
 
   public scroll(index: number) {
     if (index !== this.sectionIndex) {
       this.scrolling = true;
-      this.switchSections(index);
+      this.setCurrentSectionInactive(index);
       this.invokeScroll();
       this.emitChangeEvent();
     }
   }
 
-  private switchSections(index: number) {
+  private setCurrentSectionInactive(index: number) {
     this.previousSectionIndex = this.sectionIndex;
     this.sectionIndex = index;
 
     if (this.activeElement) {
       this.activeElement.classList.remove(FullpageComponent.activeClass);
     }
+  }
 
+  private onScrollComplete() {
     const section = this.sections[this.sectionIndex];
     this.activeElement = this.document.getElementById(section);
 
     if (this.activeElement) {
       this.activeElement.classList.add(FullpageComponent.activeClass);
     }
+
+    this.scrolling = false;
   }
 
   private invokeScroll() {
@@ -98,8 +87,7 @@ export class FullpageComponent implements OnInit {
       .pipe(
         finalize(() => {
           setTimeout(() => {
-            this.yPos = window.pageYOffset;
-            this.scrolling = false;
+            this.onScrollComplete();
           }, FullpageComponent.scrollSensitivity);
         })
       ).subscribe();
@@ -141,7 +129,6 @@ export class FullpageComponent implements OnInit {
   @HostListener('window:wheel', ['$event'])
   onWindowScroll(event: WheelEvent) {
     if (!this.scrolling) {
-      console.log(event);
       if (event.deltaY > 0) {
         this.scrollDown(event);
       } else {

@@ -21,10 +21,3 @@
     width: 0;
   }
 }
-
-::ng-deep *,
-::ng-deep :after,
-::ng-deep :before {
-  box-sizing: inherit;
-  box-sizing: border-box;
-}
