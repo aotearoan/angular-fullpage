@@ -4,8 +4,9 @@
 
   .fullpage-section {
     width: 100vw;
-    height: 100vh;
+    height: 102vh;
     margin: 0;
+    overflow-y: hidden;
   }
 
   .fullpage-section-fit-content {
@@ -19,4 +20,11 @@
   &::-webkit-scrollbar {
     width: 0;
   }
+}
+
+::ng-deep *,
+::ng-deep :after,
+::ng-deep :before {
+  box-sizing: inherit;
+  box-sizing: border-box;
 }

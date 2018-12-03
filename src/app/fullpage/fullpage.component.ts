@@ -16,7 +16,7 @@ export class FullpageComponent implements OnInit {
   // if focus is on a form input then disable scrolling so that the form is usable
   public static ignoreWhenFocused = ['textarea', 'input'];
   public static activeClass = 'fullpage-active';
-  public static scrollSensitivity = 1000;
+  public static scrollSensitivity = 1500;
 
   public activeElement;
   public previousSectionIndex: number;
@@ -97,8 +97,8 @@ export class FullpageComponent implements OnInit {
     this.scrollToService.scrollTo(config)
       .pipe(
         finalize(() => {
-          this.yPos = window.pageYOffset;
           setTimeout(() => {
+            this.yPos = window.pageYOffset;
             this.scrolling = false;
           }, FullpageComponent.scrollSensitivity);
         })
@@ -112,40 +112,40 @@ export class FullpageComponent implements OnInit {
     this.sectionChange.emit(changeEvent);
   }
 
-  public scrollUp(event: Event = null) {
-    if (this.checkFocus()) {
+  public scrollUp(event: Event) {
+    if (this.checkFocus(event)) {
       if (this.sectionIndex > 0) {
         this.scroll(this.sectionIndex - 1);
-      } else if (event) {
+      } else if (event.type !== 'wheel') {
         // prevent default when this is the top section and we are scrolling up
         event.preventDefault();
       }
     }
   }
 
-  public scrollDown(event: Event = null) {
-    if (this.checkFocus()) {
+  public scrollDown(event: Event) {
+    if (this.checkFocus(event)) {
       if (this.sectionIndex < this.sections.length - 1) {
         this.scroll(this.sectionIndex + 1);
-      } else if (event) {
+      } else if (event.type !== 'wheel') {
         // prevent default when this is the bottom section and we are scrolling down
         event.preventDefault();
       }
     }
   }
 
-  private checkFocus() {
-    return !FullpageComponent.ignoreWhenFocused.includes(this.document.activeElement.localName);
+  private checkFocus(event: Event) {
+    return event.type !== 'keydown' || !FullpageComponent.ignoreWhenFocused.includes(this.document.activeElement.localName);
   }
 
   @HostListener('window:wheel', ['$event'])
   onWindowScroll(event: WheelEvent) {
     if (!this.scrolling) {
-      console.log('scrolling called');
+      console.log(event);
       if (event.deltaY > 0) {
-        this.scrollDown();
+        this.scrollDown(event);
       } else {
-        this.scrollUp();
+        this.scrollUp(event);
       }
     } else {
       event.preventDefault();
