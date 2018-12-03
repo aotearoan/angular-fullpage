@@ -1,20 +1,20 @@
-import {Component, EventEmitter, HostListener, Inject, Input, OnInit, Output} from '@angular/core';
-import {ScrollToConfigOptions, ScrollToService} from '@nicky-lenaers/ngx-scroll-to';
-import {ActivatedRoute, Router} from '@angular/router';
-import {DOCUMENT} from '@angular/common';
-import {FullpageChangeModel} from './fullpage-change.model';
-import {finalize} from 'rxjs/operators';
-import {from} from 'rxjs';
+import { DOCUMENT } from '@angular/common';
+import { Component, EventEmitter, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ScrollToConfigOptions, ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
+import { from } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { FullpageChangeModel } from './fullpage-change.model';
 
 @Component({
   selector: 'app-fullpage',
+  styleUrls: ['./fullpage.component.scss'],
   templateUrl: './fullpage.component.html',
-  styleUrls: ['./fullpage.component.scss']
 })
 export class FullpageComponent implements OnInit {
 
   // if focus is on a form input then disable scrolling so that the form is usable
-  public static ignoreWhenFocused = ['textarea', 'input', 'select', 'option'];
+  public static ignoreWhenFocused = ['textarea', 'input'];
   public static activeClass = 'fullpage-active';
   public static scrollSensitivity = 750;
 
@@ -79,7 +79,7 @@ export class FullpageComponent implements OnInit {
   private invokeScroll() {
     const section = this.sections[this.sectionIndex];
     const config: ScrollToConfigOptions = {
-      target: section
+      target: section,
     };
 
     from(this.router.navigate([window.location.pathname], {fragment: section}));
@@ -89,7 +89,7 @@ export class FullpageComponent implements OnInit {
           setTimeout(() => {
             this.onScrollComplete();
           }, FullpageComponent.scrollSensitivity);
-        })
+        }),
       ).subscribe();
   }
 
@@ -104,8 +104,10 @@ export class FullpageComponent implements OnInit {
     if (this.checkFocus(event)) {
       if (this.sectionIndex > 0) {
         this.scroll(this.sectionIndex - 1);
+      } else if (event.type !== 'wheel') {
+        // prevent default when this is the top section and we are scrolling up
+        event.preventDefault();
       }
-      event.preventDefault();
     }
   }
 
@@ -113,8 +115,10 @@ export class FullpageComponent implements OnInit {
     if (this.checkFocus(event)) {
       if (this.sectionIndex < this.sections.length - 1) {
         this.scroll(this.sectionIndex + 1);
+      } else if (event.type !== 'wheel') {
+        // prevent default when this is the bottom section and we are scrolling down
+        event.preventDefault();
       }
-      event.preventDefault();
     }
   }
 
@@ -123,32 +127,34 @@ export class FullpageComponent implements OnInit {
   }
 
   @HostListener('window:wheel', ['$event'])
-  onWindowScroll(event: WheelEvent) {
+  public onWindowScroll(event: WheelEvent) {
     if (!this.scrolling) {
       if (event.deltaY > 0) {
         this.scrollDown(event);
       } else {
         this.scrollUp(event);
       }
+    } else {
+      event.preventDefault();
     }
   }
 
   @HostListener('window:keydown.PageUp', ['$event'])
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
-  arrowUpEvent(event: KeyboardEvent) {
+  public arrowUpEvent(event: KeyboardEvent) {
     this.scrollUp(event);
   }
 
   @HostListener('window:keydown.PageDown', ['$event'])
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
-  arrowDownEvent(event: KeyboardEvent) {
+  public arrowDownEvent(event: KeyboardEvent) {
     this.scrollDown(event);
   }
 
   @HostListener('window:resize', ['$event'])
-  resizeEvent(event: KeyboardEvent) {
+  public resizeEvent(event: KeyboardEvent) {
     window.location.reload();
   }
 }
