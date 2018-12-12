@@ -1,6 +1,6 @@
 {
   "name": "@aotearoan/angular-fullpage",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "jquery free Angular 2+ full-page scrolling component",
   "keywords": [
     "fullpage",
