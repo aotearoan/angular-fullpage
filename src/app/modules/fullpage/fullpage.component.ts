@@ -1,103 +1,109 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ScrollToConfigOptions, ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
-import { from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { FullpageChangeModel } from './fullpage-change.model';
+import { WindowRefService } from '../window-ref/window-ref.service';
+import { IScrollEventListener } from './scroll-event.listener';
+import { ScrollEventService } from './scroll-event.service';
+import { SectionModel } from './section.model';
 
 @Component({
   selector: 'app-fullpage',
   styleUrls: ['./fullpage.component.scss'],
   templateUrl: './fullpage.component.html',
 })
-export class FullpageComponent implements OnInit {
+export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListener {
 
   // if focus is on a form input then disable scrolling so that the form is usable
   public static ignoreWhenFocused = ['textarea', 'input'];
+  public static eventListenerKey = 'fullpage';
   public static activeClass = 'fullpage-active';
   public static scrollSensitivity = 750;
 
+  public window;
   public activeElement;
   public previousSectionIndex: number;
   public sectionIndex: number;
   public scrolling: boolean;
 
-  @Input() public sections: string[];
-  @Output() public sectionChange = new EventEmitter<FullpageChangeModel>();
+  @Input() public sections: SectionModel[];
+  @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private scrollToService: ScrollToService,
                      private route: ActivatedRoute,
                      private router: Router,
-                     @Inject(DOCUMENT) private document: any) {
+                     @Inject(DOCUMENT) private document: any,
+                     private windowRef: WindowRefService,
+                     private titleService: Title,
+                     private translate: TranslateService,
+                     private scrollEventService: ScrollEventService) {
+    this.window = windowRef.getNativeWindow();
   }
 
   public ngOnInit() {
-    setTimeout(() => {
-      // normalise url slashes
-      const fragment = this.route.snapshot.fragment;
-      if (fragment) {
-        const index = Math.max(this.sections.indexOf(fragment), 0);
-        this.scroll(index);
-      } else {
-        this.scroll(0);
-      }
+    // listen to scroll events from other components
+    this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
 
-      window.onwheel = () => !this.scrolling;
-    });
+    // capture all scroll wheel events while scrolling is active (prevents the default action)
+    this.window.onwheel = () => !this.scrolling;
+
+    // needs to happen after rendering
+    setTimeout(() => {
+      const fragment = this.route.snapshot.fragment;
+      this.scroll(Math.max(this.sections.findIndex((s) => s.url === fragment), 0));
+    }, 200);
+  }
+
+  public ngOnDestroy() {
+    this.scrollEventService.removeListener(FullpageComponent.eventListenerKey);
   }
 
   public scroll(index: number) {
     if (index !== this.sectionIndex) {
       this.scrolling = true;
-      this.setCurrentSectionInactive(index);
+      this.switchSections(index);
       this.invokeScroll();
-      this.emitChangeEvent();
     }
   }
 
-  private setCurrentSectionInactive(index: number) {
+  private switchSections(index: number) {
     this.previousSectionIndex = this.sectionIndex;
     this.sectionIndex = index;
 
     if (this.activeElement) {
       this.activeElement.classList.remove(FullpageComponent.activeClass);
     }
-  }
 
-  private onScrollComplete() {
     const section = this.sections[this.sectionIndex];
-    this.activeElement = this.document.getElementById(section);
+    this.activeElement = this.document.getElementById(section.url);
 
     if (this.activeElement) {
       this.activeElement.classList.add(FullpageComponent.activeClass);
     }
 
-    this.scrolling = false;
+    this.sections.forEach((s) => s.active = s.url === section.url);
+    this.sectionChange.emit(section.url);
   }
 
   private invokeScroll() {
     const section = this.sections[this.sectionIndex];
     const config: ScrollToConfigOptions = {
-      target: section,
+      target: section.url,
     };
 
-    from(this.router.navigate([window.location.pathname], {fragment: section}));
+    this.translate.get(section.title).subscribe((title: string) => this.titleService.setTitle(title));
+    this.router.navigate([this.window.location.pathname], {fragment: section.url});
     this.scrollToService.scrollTo(config)
       .pipe(
         finalize(() => {
           setTimeout(() => {
-            this.onScrollComplete();
+            this.scrolling = false;
           }, FullpageComponent.scrollSensitivity);
         }),
       ).subscribe();
-  }
-
-  private emitChangeEvent() {
-    const changeEvent = new FullpageChangeModel();
-    changeEvent.previousSection = this.sections[this.previousSectionIndex];
-    changeEvent.newSection = this.sections[this.sectionIndex];
-    this.sectionChange.emit(changeEvent);
   }
 
   public scrollUp(event: Event) {
@@ -127,7 +133,7 @@ export class FullpageComponent implements OnInit {
   }
 
   @HostListener('window:wheel', ['$event'])
-  public onWindowScroll(event: WheelEvent) {
+  public fullpageWindowScroll(event: WheelEvent) {
     if (!this.scrolling) {
       if (event.deltaY > 0) {
         this.scrollDown(event);
@@ -142,19 +148,19 @@ export class FullpageComponent implements OnInit {
   @HostListener('window:keydown.PageUp', ['$event'])
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
-  public arrowUpEvent(event: KeyboardEvent) {
+  public fullpageArrowUpEvent(event: KeyboardEvent) {
     this.scrollUp(event);
   }
 
   @HostListener('window:keydown.PageDown', ['$event'])
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
-  public arrowDownEvent(event: KeyboardEvent) {
+  public fullpageArrowDownEvent(event: KeyboardEvent) {
     this.scrollDown(event);
   }
 
   @HostListener('window:resize', ['$event'])
-  public resizeEvent(event: KeyboardEvent) {
-    window.location.reload();
+  public fullpageResizeEvent(event: KeyboardEvent) {
+    this.window.location.reload();
   }
 }

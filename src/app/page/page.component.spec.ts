@@ -1,5 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FullpageTestModule } from '../modules/fullpage/fullpage-test.module';
+import { FullpageModule } from '../modules/fullpage/fullpage.module';
+import { SectionModule } from '../section/section.module';
 import { PageComponent } from './page.component';
 
 describe('PageComponent', () => {
@@ -8,7 +10,12 @@ describe('PageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PageComponent ]
+      declarations: [ PageComponent ],
+      imports: [
+        FullpageModule,
+        SectionModule,
+        FullpageTestModule,
+      ],
     })
     .compileComponents();
   }));

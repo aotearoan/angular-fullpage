@@ -1,16 +1,16 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FullpageModule } from '../modules/fullpage/fullpage.module';
+import { SectionModule } from '../section/section.module';
 import { PageComponent } from './page.component';
-import { SectionModule} from '../section/section.module';
-import {FullpageModule} from '../fullpage/fullpage.module';
 
 @NgModule({
   declarations: [PageComponent],
+  exports: [PageComponent],
   imports: [
     CommonModule,
     SectionModule,
-    FullpageModule
+    FullpageModule,
   ],
-  exports: [PageComponent]
 })
 export class PageModule { }

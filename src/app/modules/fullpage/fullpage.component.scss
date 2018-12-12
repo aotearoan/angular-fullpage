@@ -1,11 +1,11 @@
 ::ng-deep .fullpage {
   display: flex;
   flex-direction: column;
+  margin: 0;
 
   .fullpage-section {
     width: 100vw;
-    height: 102vh;
-    margin: 0;
+    height: 100vh;
     overflow-y: hidden;
   }
 
@@ -17,7 +17,8 @@
 ::ng-deep body {
   padding: 0;
   margin: 0;
-  &::-webkit-scrollbar {
+
+  &::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
     width: 0;
   }
 }

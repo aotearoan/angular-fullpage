@@ -1,10 +1,11 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { SectionModel } from '../modules/fullpage/section.model';
 
 @Component({
   selector: 'app-section',
+  styleUrls: ['./section.component.scss'],
   templateUrl: './section.component.html',
-  styleUrls: ['./section.component.scss']
 })
 export class SectionComponent {
-  @Input() public section: any;
+  @Input() public section: SectionModel;
 }

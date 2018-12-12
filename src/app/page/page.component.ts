@@ -2,18 +2,16 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-page',
+  styleUrls: ['./page.component.scss'],
   templateUrl: './page.component.html',
-  styleUrls: ['./page.component.scss']
 })
 export class PageComponent {
-  public links = [
-    {url: 'section-a', title: 'Section A'},
-    {url: 'section-b', title: 'Section B'},
-    {url: 'section-c', title: 'Section C'},
-    {url: 'section-d', title: 'Section D'},
-    {url: 'section-e', title: 'Section E'},
-    {url: 'section-f', title: 'Section F'}
+  public sections = [
+    {url: 'section-a', title: 'Section A', active: false},
+    {url: 'section-b', title: 'Section B', active: false},
+    {url: 'section-c', title: 'Section C', active: false},
+    {url: 'section-d', title: 'Section D', active: false},
+    {url: 'section-e', title: 'Section E', active: false},
+    {url: 'section-f', title: 'Section F', active: false},
   ];
-
-  public sections = this.links.map((l) => l.url);
 }
