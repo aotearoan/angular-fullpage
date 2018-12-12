@@ -1,36 +1,60 @@
 {
-  "name": "@aotearoan/angular-fullpage-scroll",
-  "version": "0.0.0",
+  "name": "@aotearoan/angular-fullpage",
+  "version": "0.0.8",
+  "description": "jquery free Angular 2+ full-page scrolling component",
+  "keywords": [
+    "fullpage",
+    "full",
+    "page",
+    "full-page",
+    "scrolling",
+    "angular",
+    "angular2",
+    "angular4",
+    "angular6",
+    "angular7",
+    "javascript",
+    "typescript",
+    "html",
+    "css",
+    "sass",
+    "scss",
+    "component",
+    "angular-library",
+    "angular-components",
+    "component-library"
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "packagr": "ng-packagr -p ng-package.json"
   },
-  "private": true,
-  "dependencies": {
+  "private": false,
+  "peerDependencies": {
     "@angular/animations": "~7.1.0",
     "@angular/common": "~7.1.0",
-    "@angular/compiler": "~7.1.0",
+    "@angular/compiler": "^5.0.0",
     "@angular/core": "~7.1.0",
     "@angular/forms": "~7.1.0",
     "@angular/platform-browser": "~7.1.0",
     "@angular/platform-browser-dynamic": "~7.1.0",
     "@angular/router": "~7.1.0",
-    "@ngx-translate/core": "^11.0.1",
-    "@nicky-lenaers/ngx-scroll-to": "^1.1.1",
     "core-js": "^2.5.4",
-    "ngx-page-scroll": "^5.0.0",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.26"
   },
+  "dependencies": {
+    "@nicky-lenaers/ngx-scroll-to": "^1.1.1"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.11.0",
     "@angular/cli": "~7.1.0",
-    "@angular/compiler-cli": "~7.1.0",
+    "@angular/compiler-cli": "^5.0.0",
     "@angular/language-service": "~7.1.0",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
@@ -43,9 +67,18 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "ng-packagr": "^4.4.5",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
+    "tsickle": "^0.34.0",
     "tslint": "~5.11.0",
     "typescript": "~3.1.6"
+  },
+  "author": "Andrew Erickson <andrew@aotearoan.com>",
+  "license": "MIT",
+  "repository": "https://github.com/aotearoan/angular-fullpage.git",
+  "homepage": "https://github.com/aotearoan/angular-fullpage",
+  "bugs": {
+    "url": "https://github.com/aotearoan/angular-fullpage/issues"
   }
 }

@@ -6,10 +6,10 @@ import { FullpageComponent } from './fullpage.component';
 import { FullpageModule } from './fullpage.module';
 @Component({
   template: `
-    <app-fullpage [sections]="sections">
+    <ao-fullpage [sections]="sections">
       <div class="fullpage-section" data-anchor="section-1"></div>
       <div class="fullpage-section" data-anchor="section-2"></div>
-    </app-fullpage>
+    </ao-fullpage>
   `,
 })
 export class FullpageTestComponent {

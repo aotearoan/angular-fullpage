@@ -1,8 +1,6 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { Component, EventEmitter, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { ScrollToConfigOptions, ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
 import { finalize } from 'rxjs/operators';
 import { WindowRefService } from '../window-ref/window-ref.service';
@@ -11,7 +9,7 @@ import { ScrollEventService } from './scroll-event.service';
 import { SectionModel } from './section.model';
 
 @Component({
-  selector: 'app-fullpage',
+  selector: 'ao-fullpage',
   styleUrls: ['./fullpage.component.scss'],
   templateUrl: './fullpage.component.html',
 })
@@ -37,10 +35,12 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
                      private router: Router,
                      @Inject(DOCUMENT) private document: any,
                      private windowRef: WindowRefService,
-                     private titleService: Title,
-                     private translate: TranslateService,
-                     private scrollEventService: ScrollEventService) {
+                     private scrollEventService: ScrollEventService,
+                     private platformLocation: PlatformLocation) {
     this.window = windowRef.getNativeWindow();
+    platformLocation.onPopState(() => {
+      this.window.location.reload();
+    });
   }
 
   public ngOnInit() {
@@ -94,7 +94,6 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
       target: section.url,
     };
 
-    this.translate.get(section.title).subscribe((title: string) => this.titleService.setTitle(title));
     this.router.navigate([this.window.location.pathname], {fragment: section.url});
     this.scrollToService.scrollTo(config)
       .pipe(
@@ -159,8 +158,13 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
     this.scrollDown(event);
   }
 
-  @HostListener('window:resize', ['$event'])
-  public fullpageResizeEvent(event: KeyboardEvent) {
-    this.window.location.reload();
+  @HostListener('window:resize')
+  public fullpageResizeEvent() {
+    const section = this.sections[this.sectionIndex];
+    const config: ScrollToConfigOptions = {
+      target: section.url,
+    };
+
+    this.scrollToService.scrollTo(config);
   }
 }

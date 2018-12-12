@@ -9,6 +9,6 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to angular-fullpage-scroll!');
+    expect(page.getTitleText()).toEqual('Section A works!');
   });
 });
