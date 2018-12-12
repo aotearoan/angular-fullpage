@@ -7,11 +7,11 @@ import { Component } from '@angular/core';
 })
 export class PageComponent {
   public sections = [
-    {url: 'section-a', title: 'Section A', active: false},
-    {url: 'section-b', title: 'Section B', active: false},
-    {url: 'section-c', title: 'Section C', active: false},
-    {url: 'section-d', title: 'Section D', active: false},
-    {url: 'section-e', title: 'Section E', active: false},
-    {url: 'section-f', title: 'Section F', active: false},
+    {url: 'section-a', active: false},
+    {url: 'section-b', active: false},
+    {url: 'section-c', active: false},
+    {url: 'section-d', active: false},
+    {url: 'section-e', active: false},
+    {url: 'section-f', active: false},
   ];
 }

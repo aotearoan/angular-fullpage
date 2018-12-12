@@ -14,8 +14,8 @@ import { FullpageModule } from './fullpage.module';
 })
 export class FullpageTestComponent {
   public sections = [
-    { url: 'section-1', title: 'Section 1', active: true},
-    { url: 'section-2', title: 'Section 2', active: false},
+    { url: 'section-1', active: true},
+    { url: 'section-2', active: false},
   ];
 }
 describe('FullpageComponent', () => {
