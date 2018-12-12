@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@aotearoan/angular-fullpage": [
+        "dist/aotearoan/angular-fullpage"
+      ],
+      "@aotearoan/angular-fullpage/*": [
+        "dist/aotearoan/angular-fullpage/*"
+      ]
+    }
   }
 }

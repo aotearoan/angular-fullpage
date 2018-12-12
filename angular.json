@@ -3,11 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "@aotearoan/angular-fullpage": {
+    "angular-fullpage": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
-      "prefix": "ao",
+      "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
           "styleext": "scss"
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/@aotearoan/angular-fullpage",
+            "outputPath": "dist/angular-fullpage",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -61,18 +61,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "@aotearoan/angular-fullpage:build"
+            "browserTarget": "angular-fullpage:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "@aotearoan/angular-fullpage:build:production"
+              "browserTarget": "angular-fullpage:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "@aotearoan/angular-fullpage:build"
+            "browserTarget": "angular-fullpage:build"
           }
         },
         "test": {
@@ -106,20 +106,20 @@
         }
       }
     },
-    "@aotearoan/angular-fullpage-e2e": {
+    "angular-fullpage-e2e": {
       "root": "e2e/",
       "projectType": "application",
-      "prefix": "ao",
+      "prefix": "app",
       "architect": {
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "@aotearoan/angular-fullpage:serve"
+            "devServerTarget": "angular-fullpage:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "@aotearoan/angular-fullpage:serve:production"
+              "devServerTarget": "angular-fullpage:serve:production"
             }
           }
         },
@@ -133,7 +133,42 @@
           }
         }
       }
+    },
+    "@aotearoan/angular-fullpage": {
+      "root": "projects/aotearoan/angular-fullpage",
+      "sourceRoot": "projects/aotearoan/angular-fullpage/src",
+      "projectType": "library",
+      "prefix": "ao",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/aotearoan/angular-fullpage/tsconfig.lib.json",
+            "project": "projects/aotearoan/angular-fullpage/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/aotearoan/angular-fullpage/src/test.ts",
+            "tsConfig": "projects/aotearoan/angular-fullpage/tsconfig.spec.json",
+            "karmaConfig": "projects/aotearoan/angular-fullpage/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/aotearoan/angular-fullpage/tsconfig.lib.json",
+              "projects/aotearoan/angular-fullpage/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
-  "defaultProject": "@aotearoan/angular-fullpage"
+  "defaultProject": "angular-fullpage"
 }

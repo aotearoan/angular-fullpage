@@ -2,23 +2,23 @@
   display: flex;
   flex-direction: column;
   margin: 0;
+}
 
-  .fullpage-section {
+::ng-deep .fullpage .fullpage-section {
     width: 100vw;
     height: 100vh;
     overflow-y: hidden;
-  }
+}
 
-  .fullpage-section-fit-content {
+::ng-deep .fullpage .fullpage-section-fit-content {
     width: 100vw;
-  }
 }
 
 ::ng-deep body {
   padding: 0;
   margin: 0;
+}
 
-  &::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
+::ng-deep body::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
     width: 0;
-  }
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FullpageModule } from '../modules/fullpage/fullpage.module';
+import { FullpageModule } from '@aotearoan/angular-fullpage';
 import { SectionModule } from '../section/section.module';
 import { PageComponent } from './page.component';
 

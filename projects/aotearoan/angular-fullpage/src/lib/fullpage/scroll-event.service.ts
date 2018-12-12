@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IScrollEventListener } from './scroll-event.listener';
 
 @Injectable()
 export class ScrollEventService implements OnDestroy {
@@ -37,4 +36,8 @@ export class ScrollEventService implements OnDestroy {
   public scroll(index: number) {
     this.eventsSubject.next(index);
   }
+}
+
+export interface IScrollEventListener {
+  scroll(index: number);
 }

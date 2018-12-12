@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SectionModel } from '../modules/fullpage/section.model';
+import { SectionModel } from '@aotearoan/angular-fullpage';
 
 @Component({
   selector: 'app-section',

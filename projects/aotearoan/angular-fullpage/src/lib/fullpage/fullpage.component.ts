@@ -4,14 +4,42 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ScrollToConfigOptions, ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
 import { finalize } from 'rxjs/operators';
 import { WindowRefService } from '../window-ref/window-ref.service';
-import { IScrollEventListener } from './scroll-event.listener';
-import { ScrollEventService } from './scroll-event.service';
+import { IScrollEventListener, ScrollEventService } from './scroll-event.service';
 import { SectionModel } from './section.model';
 
 @Component({
   selector: 'ao-fullpage',
-  styleUrls: ['fullpage.component.scss'],
-  templateUrl: 'fullpage.component.html',
+  styles: [`
+    ::ng-deep .fullpage {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+
+    ::ng-deep .fullpage .fullpage-section {
+      width: 100vw;
+      height: 100vh;
+      overflow-y: hidden;
+    }
+
+    ::ng-deep .fullpage .fullpage-section-fit-content {
+      width: 100vw;
+    }
+
+    ::ng-deep body {
+      padding: 0;
+      margin: 0;
+    }
+
+    ::ng-deep body::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
+    width: 0;
+    }
+  `],
+  template: `
+    <div class="fullpage" *ngIf="sections" [class.scrolling]="scrolling">
+      <ng-content></ng-content>
+    </div>
+  `,
 })
 export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListener {
 

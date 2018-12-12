@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FullpageTestModule } from '../modules/fullpage/fullpage-test.module';
-import { FullpageModule } from '../modules/fullpage/fullpage.module';
+import { FullpageModule } from '@aotearoan/angular-fullpage';
+import { FullpageTestModule } from '../../../projects/aotearoan/angular-fullpage/src/lib/fullpage/fullpage-test.module';
 import { SectionModule } from '../section/section.module';
 import { PageComponent } from './page.component';
 
