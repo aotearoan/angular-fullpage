@@ -10,8 +10,8 @@ import { SectionModel } from './section.model';
 
 @Component({
   selector: 'ao-fullpage',
-  styleUrls: ['./fullpage.component.scss'],
-  templateUrl: './fullpage.component.html',
+  styleUrls: ['fullpage.component.scss'],
+  templateUrl: 'fullpage.component.html',
 })
 export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListener {
 
