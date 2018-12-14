@@ -19,7 +19,8 @@ import { SectionModel } from './section.model';
     ::ng-deep .fullpage .fullpage-section {
       width: 100vw;
       height: 100vh;
-      overflow-y: hidden;
+      overflow-y: scroll;
+      overflow-x: hidden;
     }
 
     ::ng-deep .fullpage .fullpage-section-fit-content {
@@ -48,12 +49,15 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   public static eventListenerKey = 'fullpage';
   public static activeClass = 'fullpage-active';
   public static scrollSensitivity = 750;
+  public static sectionScrollSensitivity = 1250;
 
   public window;
   public activeElement;
   public previousSectionIndex: number;
   public sectionIndex: number;
   public scrolling: boolean;
+  public sectionScrolling: boolean;
+  public sectionScrollingTimeout;
 
   @Input() public sections: SectionModel[];
   @Output() public sectionChange = new EventEmitter<string>();
@@ -90,7 +94,7 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   }
 
   public scroll(index: number) {
-    if (index !== this.sectionIndex) {
+    if (index !== this.sectionIndex && !this.sectionScrolling) {
       this.scrolling = true;
       this.switchSections(index);
       this.invokeScroll();
@@ -134,29 +138,66 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   }
 
   public scrollUp(event: Event) {
-    if (this.checkFocus(event)) {
+    if (this.canScroll(event) && this.canScrollUp(event)) {
       if (this.sectionIndex > 0) {
         this.scroll(this.sectionIndex - 1);
       } else if (event.type !== 'wheel') {
         // prevent default when this is the top section and we are scrolling up
         event.preventDefault();
       }
+    } else {
+      this.activateSectionScrolling();
     }
   }
 
   public scrollDown(event: Event) {
-    if (this.checkFocus(event)) {
+    if (this.canScroll(event) && this.canScrollDown(event)) {
       if (this.sectionIndex < this.sections.length - 1) {
         this.scroll(this.sectionIndex + 1);
       } else if (event.type !== 'wheel') {
         // prevent default when this is the bottom section and we are scrolling down
         event.preventDefault();
       }
+    } else {
+      this.activateSectionScrolling();
     }
   }
 
-  private checkFocus(event: Event) {
-    return event.type !== 'keydown' || !FullpageComponent.ignoreWhenFocused.includes(this.document.activeElement.localName);
+  private activateSectionScrolling() {
+    this.sectionScrolling = true;
+    if (this.sectionScrollingTimeout) {
+      clearTimeout(this.sectionScrollingTimeout);
+    }
+    this.sectionScrollingTimeout = setTimeout(() => {
+      this.sectionScrolling = false;
+      if (this.sectionScrollingTimeout) {
+        clearTimeout(this.sectionScrollingTimeout);
+      }
+    }, FullpageComponent.sectionScrollSensitivity);
+  }
+
+  private canScroll(event: Event) {
+    return event.type !== 'keydown' || this.checkFocus();
+  }
+
+  public checkFocus() {
+    return !FullpageComponent.ignoreWhenFocused.includes(this.document.activeElement.localName);
+  }
+
+  private canScrollUp(event: Event) {
+    return event.type !== 'wheel' || this.calcSectionPosition().atSectionTop;
+  }
+
+  private canScrollDown(event: Event) {
+    return event.type !== 'wheel' || this.calcSectionPosition().atSectionBottom;
+  }
+
+  private calcSectionPosition() {
+    const sectionPositions = {
+      atSectionTop: this.activeElement.scrollTop === 0,
+      atSectionBottom: this.activeElement.offsetHeight + this.activeElement.scrollTop === this.activeElement.scrollHeight,
+    };
+    return sectionPositions;
   }
 
   @HostListener('window:wheel', ['$event'])

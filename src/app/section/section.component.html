@@ -1,6 +1,3 @@
 <div class="section" *ngIf="section">
-  <h1>{{ section.url.replace('-', ' ') | titlecase }} works!</h1>
-  <form>
-    <textarea rows="10" placeholder="Interaction with form controls should prevent scrolling"></textarea>
-  </form>
+  <ng-content></ng-content>
 </div>

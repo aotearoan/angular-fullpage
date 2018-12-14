@@ -1,14 +1,36 @@
-#section-a,
-#section-d {
+#section-a {
   background-color: #F7CAC9;
 }
 
-#section-b,
-#section-e {
-  background-color: #5f4b8b;
+#section-b {
+  background-color: #5F4B8B;
 }
 
-#section-c,
-#section-f {
-  background-color: #fa7268;
+#section-c {
+  background-color: #FA7268;
+}
+
+#section-d {
+  background-color: #138D90;
+}
+
+h1 {
+  font-family: 'Avenir Next', sans-serif;
+  font-weight: 800;
+  font-size: 100px;
+  color: #1B255D;
+  text-align: center;
+}
+
+textarea {
+  width: 700px;
+  font-family: 'Avenir Next', serif;
+  font-size: 16px;
+  margin-bottom: 50px;
+}
+
+p {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60%;
 }

@@ -11,7 +11,5 @@ export class PageComponent {
     {url: 'section-b', active: false},
     {url: 'section-c', active: false},
     {url: 'section-d', active: false},
-    {url: 'section-e', active: false},
-    {url: 'section-f', active: false},
   ];
 }
