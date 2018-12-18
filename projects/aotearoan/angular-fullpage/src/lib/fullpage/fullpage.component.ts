@@ -32,8 +32,16 @@ import { SectionModel } from './section.model';
       margin: 0;
     }
 
-    ::ng-deep body::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
-    width: 0;
+    ::ng-deep html,
+    ::ng-deep body,
+    ::ng-deep .fullpage-section {
+      -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+
+    ::ng-deep html::-webkit-scrollbar,
+    ::ng-deep body::-webkit-scrollbar,
+    ::ng-deep .fullpage-section::-webkit-scrollbar {
+      width: 0;
     }
   `],
   template: `
