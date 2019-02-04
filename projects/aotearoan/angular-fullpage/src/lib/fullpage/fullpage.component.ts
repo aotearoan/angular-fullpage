@@ -5,6 +5,7 @@ import { ScrollToConfigOptions, ScrollToService } from '@nicky-lenaers/ngx-scrol
 import { finalize } from 'rxjs/operators';
 import { WindowRefService } from '../window-ref/window-ref.service';
 import { IScrollEventListener, ScrollEventService } from './scroll-event.service';
+import { SectionPositionModel } from './section-position.model';
 import { SectionModel } from './section.model';
 
 @Component({
@@ -56,11 +57,10 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   public static ignoreWhenFocused = ['textarea', 'input'];
   public static eventListenerKey = 'fullpage';
   public static activeClass = 'fullpage-active';
-  public static scrollSensitivity = 750;
-  public static sectionScrollSensitivity = 1250;
+  public static scrollingCompleteSensitivity = 750;
 
   public window;
-  public activeElement;
+  public activeSection;
   public previousSectionIndex: number;
   public sectionIndex: number;
   public scrolling: boolean;
@@ -68,6 +68,8 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   public sectionScrollingTimeout;
 
   @Input() public sections: SectionModel[];
+  @Input() public lockScrolling: boolean;
+  @Input() public scrollSensitivity = 1250;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private scrollToService: ScrollToService,
@@ -93,7 +95,9 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
     // needs to happen after rendering
     setTimeout(() => {
       const fragment = this.route.snapshot.fragment;
-      this.scroll(Math.max(this.sections.findIndex((s) => s.url === fragment), 0));
+      const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
+      this.switchSections(index);
+      this.scroll(index);
     }, 200);
   }
 
@@ -102,7 +106,7 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   }
 
   public scroll(index: number) {
-    if (index !== this.sectionIndex && !this.sectionScrolling) {
+    if (!this.lockScrolling && index !== this.sectionIndex && !this.sectionScrolling) {
       this.scrolling = true;
       this.switchSections(index);
       this.invokeScroll();
@@ -113,15 +117,15 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
     this.previousSectionIndex = this.sectionIndex;
     this.sectionIndex = index;
 
-    if (this.activeElement) {
-      this.activeElement.classList.remove(FullpageComponent.activeClass);
+    if (this.activeSection) {
+      this.activeSection.classList.remove(FullpageComponent.activeClass);
     }
 
     const section = this.sections[this.sectionIndex];
-    this.activeElement = this.document.getElementById(section.url);
+    this.activeSection = this.document.getElementById(section.url);
 
-    if (this.activeElement) {
-      this.activeElement.classList.add(FullpageComponent.activeClass);
+    if (this.activeSection) {
+      this.activeSection.classList.add(FullpageComponent.activeClass);
     }
 
     this.sections.forEach((s) => s.active = s.url === section.url);
@@ -140,13 +144,21 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
         finalize(() => {
           setTimeout(() => {
             this.scrolling = false;
-          }, FullpageComponent.scrollSensitivity);
+          }, FullpageComponent.scrollingCompleteSensitivity);
         }),
       ).subscribe();
   }
 
   public scrollUp(event: Event) {
-    if (this.canScroll(event) && this.canScrollUp(event)) {
+    const sectionPosition = this.calcSectionPosition();
+    if (this.lockScrolling) {
+      if (sectionPosition.atSectionTop) {
+        event.preventDefault();
+      } else {
+        // if scrolling sections is locked and we're not at the top of the section - activate section scrolling
+        this.activateSectionScrolling();
+      }
+    } else if (this.canScroll(event) && this.canScrollUp(event, sectionPosition)) {
       if (this.sectionIndex > 0) {
         this.scroll(this.sectionIndex - 1);
       } else if (event.type !== 'wheel') {
@@ -159,7 +171,15 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
   }
 
   public scrollDown(event: Event) {
-    if (this.canScroll(event) && this.canScrollDown(event)) {
+    const sectionPosition = this.calcSectionPosition();
+    if (this.lockScrolling) {
+      if (sectionPosition.atSectionBottom) {
+        event.preventDefault();
+      } else {
+        // if scrolling sections is locked and we're not at the bottom of the section - activate section scrolling
+        this.activateSectionScrolling();
+      }
+    } else if (this.canScroll(event) && this.canScrollDown(event, sectionPosition)) {
       if (this.sectionIndex < this.sections.length - 1) {
         this.scroll(this.sectionIndex + 1);
       } else if (event.type !== 'wheel') {
@@ -181,7 +201,7 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
       if (this.sectionScrollingTimeout) {
         clearTimeout(this.sectionScrollingTimeout);
       }
-    }, FullpageComponent.sectionScrollSensitivity);
+    }, this.scrollSensitivity);
   }
 
   private canScroll(event: Event) {
@@ -192,20 +212,20 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
     return !FullpageComponent.ignoreWhenFocused.includes(this.document.activeElement.localName);
   }
 
-  private canScrollUp(event: Event) {
-    return event.type !== 'wheel' || this.calcSectionPosition().atSectionTop;
+  private canScrollUp(event: Event, sectionPosition: SectionPositionModel) {
+    return event.type !== 'wheel' || sectionPosition.atSectionTop;
   }
 
-  private canScrollDown(event: Event) {
-    return event.type !== 'wheel' || this.calcSectionPosition().atSectionBottom;
+  private canScrollDown(event: Event, sectionPosition: SectionPositionModel) {
+    return event.type !== 'wheel' || sectionPosition.atSectionBottom;
   }
 
-  private calcSectionPosition() {
-    const sectionPositions = {
-      atSectionTop: this.activeElement.scrollTop === 0,
-      atSectionBottom: this.activeElement.offsetHeight + this.activeElement.scrollTop === this.activeElement.scrollHeight,
+  private calcSectionPosition(): SectionPositionModel {
+    return {
+      atSectionTop: !!this.activeSection && this.activeSection.scrollTop === 0,
+      atSectionBottom: !!this.activeSection &&
+        this.activeSection.offsetHeight + this.activeSection.scrollTop >= this.activeSection.scrollHeight,
     };
-    return sectionPositions;
   }
 
   @HostListener('window:wheel', ['$event'])
