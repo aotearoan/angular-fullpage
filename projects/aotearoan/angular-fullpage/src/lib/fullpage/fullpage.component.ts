@@ -69,7 +69,7 @@ export class FullpageComponent implements OnInit, OnDestroy, IScrollEventListene
 
   @Input() public sections: SectionModel[];
   @Input() public lockScrolling: boolean;
-  @Input() public scrollSensitivity = 1250;
+  @Input() public scrollSensitivity = 1500;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private scrollToService: ScrollToService,
