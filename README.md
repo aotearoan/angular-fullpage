@@ -14,4 +14,6 @@ Run `ng build @aotearoan/angular-fullpage` to build the lib to `dist/aotearoan/a
 
 ## Demo server
 
-After building the lib, run `ng serve` to start the demo server at `http://localhost:4200/`.
+View a demo [here](https://aotearoan.github.io/angular-fullpage/) or to run it locally:
+
+after building the lib, run `ng serve` to start the demo server at `http://localhost:4200/`.
