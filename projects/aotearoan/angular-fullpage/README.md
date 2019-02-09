@@ -116,6 +116,6 @@ To dynamically lock the scrolling, i.e. prevent scrolling up or down to other se
 ```
 
 ### scrollSensitivity
-When scrolling with the mouse wheel multiple events are generated, these need to be consumed and discarded (prevent default) in order to ensure the user doesn't scroll through multiple sections at once. This is achieved through a timer which consumes these events for a certain amount of time. If this time is too short then too many scroll events fire and if this time is too long it blocks future scroll events which can ruin the user experience.
+When rapidly scrolling with the mouse wheel a large number of events are generated in quick succession. These need to be consumed and discarded (prevent default) in order to ensure the user doesn't scroll through multiple sections at once. This is achieved by measuring the time between events. If this time is greater than the _scrollSensitivity_ it indicates a pause between wheel events, i.e. a new user action. If not then the event is discarded.
 
-This is configurable via the _scrollSensitivity_ attribute. The default value is 1500ms which gives reasonable results, however can be increased or decreased to provide a smoother experience.
+This is configurable via the _scrollSensitivity_ attribute. The default value is **40ms** which gives reasonable results, however the value can be adjusted lower to increase sensitivity at the risk of letting through too many scroll events or higher which may result in discarding new genuine user wheel events.
