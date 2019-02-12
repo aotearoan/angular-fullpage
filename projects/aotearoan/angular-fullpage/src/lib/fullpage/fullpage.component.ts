@@ -60,6 +60,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   public static activeClass = 'fullpage-active';
 
   public window;
+  public wheelFunction;
   public activeSection;
   public previousSectionIndex: number;
   public sectionIndex: number;
@@ -93,6 +94,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
       // only enable wheel events when section scrolling is enabled
+      this.wheelFunction = this.window.onwheel;
       this.window.onwheel = () => this.sectionScrollingEnabled;
 
       const fragment = this.route.snapshot.fragment;
@@ -103,6 +105,9 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   }
 
   public ngOnDestroy() {
+    if (this.wheelFunction) {
+      this.window.onwheel = this.wheelFunction;
+    }
     this.scrollEventService.removeListener(FullpageComponent.eventListenerKey);
   }
 
