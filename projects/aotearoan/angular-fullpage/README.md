@@ -53,7 +53,7 @@ import { SectionModel } from '@aotearoan/angular-fullpage';
 Create the full page configuration in the corresponding Component
 ```typescript
   public sections: SectionModel = [
-    {url: 'section-a', active: false},
+    {url: 'section-a', active: false, pageTop: true},
     {url: 'section-b', active: false},
     {url: 'section-c', active: false},
     {url: 'section-d', active: false},
@@ -66,6 +66,7 @@ Create the full page configuration in the corresponding Component
 * define _url_ which is both the fullpage section element id and the url fragment set when navigating to a section.
 * _active_ is set by the fullpage component when the active section changes
 * _sectionChange_ is a callback which will notify you of a section change from within the component by emitting the new url/fragment. This can be useful when implementing a section navigation menu.
+* _pageTop_ set this to true for the top page section and navigation will not use the fragment e.g. the url will be / instead of /#section-a
 
 Add the full page component to the template
 

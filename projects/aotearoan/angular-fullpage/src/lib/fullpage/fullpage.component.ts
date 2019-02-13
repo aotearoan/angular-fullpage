@@ -164,7 +164,11 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       target: section.url,
     };
 
-    this.router.navigate([this.window.location.pathname], {fragment: section.url});
+    if (section.pageTop) {
+      this.router.navigate([this.window.location.pathname]);
+    } else {
+      this.router.navigate([this.window.location.pathname], {fragment: section.url});
+    }
     this.scrollToService.scrollTo(config)
       .pipe(
         finalize(() => {
