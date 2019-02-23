@@ -78,7 +78,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
-  @Input() public scrollSensitivity = 40;
+  @Input() public scrollSensitivity = 75;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private scrollToService: ScrollToService,
@@ -183,14 +183,16 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     } else {
       this.router.navigate([this.window.location.pathname], {fragment: section.url});
     }
-    this.scrollToService.scrollTo(config)
-      .pipe(
-        finalize(() => {
-          setTimeout(() => {
-            this.isScrolling = false;
-          });
-        }),
-      ).subscribe();
+    setTimeout(() => {
+      this.scrollToService.scrollTo(config)
+        .pipe(
+          finalize(() => {
+            setTimeout(() => {
+              this.isScrolling = false;
+            });
+          }),
+        ).subscribe();
+    }, 150);
   }
 
   private checkFocus() {
