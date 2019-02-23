@@ -136,17 +136,15 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   public scrollUp(event: Event) {
     if (this.sectionIndex > 0) {
       this.doScroll(this.sectionIndex - 1);
-    } else {
-      event.preventDefault();
     }
+    event.preventDefault();
   }
 
   public scrollDown(event: Event) {
     if (this.sectionIndex < this.sections.length - 1) {
       this.doScroll(this.sectionIndex + 1);
-    } else {
-      event.preventDefault();
     }
+    event.preventDefault();
   }
 
   private doScroll(index: number) {

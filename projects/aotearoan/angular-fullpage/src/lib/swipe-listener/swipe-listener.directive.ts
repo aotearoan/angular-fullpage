@@ -7,7 +7,7 @@ import {SwipeEvent} from './swipe.event';
 })
 export class SwipeListenerDirective {
   public lastTouchStartEvent: TouchEvent;
-  @Input() public swipeTolerance = 10;
+  @Input() public swipeTolerance = 30;
   @Output() public swipeEvent = new EventEmitter<SwipeEvent>();
 
   @HostListener('window:touchstart', ['$event'])
@@ -36,8 +36,6 @@ export class SwipeListenerDirective {
           startEvent: this.lastTouchStartEvent,
           endEvent: event,
         });
-      } else {
-        event.preventDefault();
       }
       this.lastTouchStartEvent = undefined;
     } else {
