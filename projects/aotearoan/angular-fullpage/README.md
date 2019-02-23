@@ -12,6 +12,7 @@ A pure Angular / Typescript component providing vertical responsive full page sc
 ## Features:
 * Full page sections with smooth scrolling navigation.
 * Mousewheel, arrow key, space (shift+space) navigation.
+* Touch device support (swipe up, swipe down).
 * Automatically allows for scrolling within a section when the content is longer than the screen.
 * Shorter sections can be specified which fit the content, not the full page height (e.g for a short footer).
 * Ability to lock/unlock scrolling dynamically in code.

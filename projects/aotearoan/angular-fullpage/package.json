@@ -1,6 +1,6 @@
 {
   "name": "@aotearoan/angular-fullpage",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "jquery free Angular 2+ full-page scrolling component",
   "keywords": [
     "fullpage",
@@ -26,16 +26,16 @@
   ],
   "private": false,
   "peerDependencies": {
-    "@angular/animations": "^7.2.3",
-    "@angular/common": "^7.2.3",
-    "@angular/compiler": "^7.2.3",
-    "@angular/core": "^7.2.3",
-    "@angular/forms": "^7.2.3",
-    "@angular/platform-browser": "^7.2.3",
-    "@angular/platform-browser-dynamic": "^7.2.3",
-    "@angular/router": "^7.2.3",
+    "@angular/animations": "^7.2.6",
+    "@angular/common": "^7.2.6",
+    "@angular/compiler": "^7.2.6",
+    "@angular/core": "^7.2.6",
+    "@angular/forms": "^7.2.6",
+    "@angular/platform-browser": "^7.2.6",
+    "@angular/platform-browser-dynamic": "^7.2.6",
+    "@angular/router": "^7.2.6",
     "@nicky-lenaers/ngx-scroll-to": "^2.0.0",
-    "core-js": "^2.6.3",
+    "core-js": "^2.6.5",
     "rxjs": "^6.4.0",
     "tslib": "^1.9.3",
     "zone.js": "^0.8.29"

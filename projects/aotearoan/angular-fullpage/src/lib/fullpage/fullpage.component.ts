@@ -3,6 +3,8 @@ import {AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnD
 import {ActivatedRoute, Router} from '@angular/router';
 import {ScrollToConfigOptions, ScrollToService} from '@nicky-lenaers/ngx-scroll-to';
 import {finalize} from 'rxjs/operators';
+import {SwipeDirection} from '../swipe-listener/swipe-direction.model';
+import {SwipeEvent} from '../swipe-listener/swipe.event';
 import {WindowRefService} from '../window-ref/window-ref.service';
 import {ScrollDirection} from './scroll-direction.enum';
 import {IScrollEventListener, ScrollEventService} from './scroll-event.service';
@@ -47,7 +49,10 @@ import {SectionModel} from './section.model';
     }
   `],
   template: `
-    <div class="fullpage" *ngIf="sections" [class.scrolling]="isScrolling">
+    <div class="fullpage"
+         *ngIf="sections"
+         [class.scrolling]="isScrolling"
+         aoSwipeListener (swipeEvent)="swipeEventHandler($event)">
       <ng-content></ng-content>
     </div>
   `,
@@ -109,6 +114,17 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       this.window.onwheel = this.wheelFunction;
     }
     this.scrollEventService.removeListener(FullpageComponent.eventListenerKey);
+  }
+
+  public swipeEventHandler(swipeEvent: SwipeEvent) {
+    switch (swipeEvent.direction) {
+      case SwipeDirection.Up:
+        this.handleScrollEvent(swipeEvent.endEvent, ScrollDirection.Down);
+        break;
+      case SwipeDirection.Down:
+        this.handleScrollEvent(swipeEvent.endEvent, ScrollDirection.Up);
+        break;
+    }
   }
 
   public scroll(index: number) {
@@ -210,8 +226,8 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     };
   }
 
-  private calculateSectionScrollingState(scrollDirection: ScrollDirection) {
-    if (event.type === 'wheel') {
+  private calculateSectionScrollingState(scrollDirection: ScrollDirection, event) {
+    if (event.type === 'wheel' || event.type === 'touchend') {
       const sectionPosition = this.calcSectionPosition();
       if (scrollDirection === ScrollDirection.Down && !sectionPosition.atSectionBottom ||
         scrollDirection === ScrollDirection.Up && !sectionPosition.atSectionTop) {
@@ -225,7 +241,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   }
 
   private handleScrollEvent(event: Event, scrollDirection: ScrollDirection) {
-    this.calculateSectionScrollingState(scrollDirection);
+    this.calculateSectionScrollingState(scrollDirection, event);
 
     if (!this.isScrolling) {
       if (this.lockScrolling) {
