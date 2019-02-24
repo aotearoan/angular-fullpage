@@ -6,6 +6,7 @@ export * from './lib/window-ref/window-ref.module';
 export * from './lib/fullpage/fullpage.component';
 // Models
 export * from './lib/fullpage/section.model';
+export * from './lib/swipe-listener/input-type.model';
 export * from './lib/swipe-listener/swipe-direction.model';
 export * from './lib/swipe-listener/swipe.event';
 // Services
