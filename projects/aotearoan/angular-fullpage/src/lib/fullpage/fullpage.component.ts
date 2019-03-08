@@ -39,7 +39,8 @@ import {SectionModel} from './section.model';
     ::ng-deep html,
     ::ng-deep body,
     ::ng-deep .fullpage-section {
-      -ms-overflow-style: -ms-autohiding-scrollbar;
+      -ms-overflow-style: none;
+      overflow: auto;
     }
 
     ::ng-deep html::-webkit-scrollbar,
