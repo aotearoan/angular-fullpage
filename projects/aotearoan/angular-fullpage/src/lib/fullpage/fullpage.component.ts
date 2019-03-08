@@ -277,14 +277,18 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
   public fullpageArrowUpEvent(event: KeyboardEvent) {
-    this.handleScrollEvent(event, ScrollDirection.Up);
+    if (this.checkFocus()) {
+      this.handleScrollEvent(event, ScrollDirection.Up);
+    }
   }
 
   @HostListener('window:keydown.PageDown', ['$event'])
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
   public fullpageArrowDownEvent(event: KeyboardEvent) {
-    this.handleScrollEvent(event, ScrollDirection.Down);
+    if (this.checkFocus()) {
+      this.handleScrollEvent(event, ScrollDirection.Down);
+    }
   }
 
   @HostListener('window:resize')
