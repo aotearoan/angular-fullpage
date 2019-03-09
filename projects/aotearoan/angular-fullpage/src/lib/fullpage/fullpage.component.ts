@@ -79,7 +79,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
-  @Input() public scrollSensitivity = 75;
+  @Input() public scrollSensitivity = 50;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private scrollToService: ScrollToService,
@@ -257,6 +257,18 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       }
     } else {
       event.preventDefault();
+    }
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  public fullpageSelectText(event: MouseEvent) {
+    if (event.buttons) {
+      const sectionPosition = this.calcSectionPosition();
+      if (sectionPosition.atSectionTop && event.clientY <= 0 ||
+        sectionPosition.atSectionBottom && event.clientY >= this.window.innerHeight - 5) {
+        console.log('blocking');
+        event.preventDefault();
+      }
     }
   }
 
