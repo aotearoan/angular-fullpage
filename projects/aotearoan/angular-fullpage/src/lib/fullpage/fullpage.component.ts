@@ -1,8 +1,6 @@
 import {DOCUMENT, PlatformLocation} from '@angular/common';
 import {AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnDestroy, Output} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ScrollToConfigOptions, ScrollToService} from '@nicky-lenaers/ngx-scroll-to';
-import {finalize} from 'rxjs/operators';
 import {SwipeDirection} from '../swipe-listener/swipe-direction.model';
 import {SwipeEvent} from '../swipe-listener/swipe.event';
 import {WindowRefService} from '../window-ref/window-ref.service';
@@ -18,6 +16,11 @@ import {SectionModel} from './section.model';
       display: flex;
       flex-direction: column;
       margin: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      transition: transform .7s ease-in;
     }
 
     ::ng-deep .fullpage .fullpage-section {
@@ -31,6 +34,90 @@ import {SectionModel} from './section.model';
       width: 100vw;
     }
 
+    ::ng-deep .fullpage.section-1 {
+      transform: translateY(-100vh);
+    }
+    
+    ::ng-deep .fullpage.section-2 {
+      transform: translateY(-200vh);
+    }
+    
+    ::ng-deep .fullpage.section-3 {
+      transform: translateY(-300vh);
+    }
+    
+    ::ng-deep .fullpage.section-4 {
+      transform: translateY(-400vh);
+    }
+    
+    ::ng-deep .fullpage.section-5 {
+      transform: translateY(-500vh);
+    }
+    
+    ::ng-deep .fullpage.section-6 {
+      transform: translateY(-600vh);
+    }
+    
+    ::ng-deep .fullpage.section-7 {
+      transform: translateY(-700vh);
+    }
+    
+    ::ng-deep .fullpage.section-8 {
+      transform: translateY(-800vh);
+    }
+    
+    ::ng-deep .fullpage.section-9 {
+      transform: translateY(-900vh);
+    }
+    
+    ::ng-deep .fullpage.section-10 {
+      transform: translateY(-1000vh);
+    }
+    
+    ::ng-deep .fullpage.section-11 {
+      transform: translateY(-1100vh);
+    }
+    
+    ::ng-deep .fullpage.section-12 {
+      transform: translateY(-1200vh);
+    }
+    
+    ::ng-deep .fullpage.section-13 {
+      transform: translateY(-1300vh);
+    }
+    
+    ::ng-deep .fullpage.section-14 {
+      transform: translateY(-1400vh);
+    }
+    
+    ::ng-deep .fullpage.section-15 {
+      transform: translateY(-1500vh);
+    }
+    
+    ::ng-deep .fullpage.section-16 {
+      transform: translateY(-1600vh);
+    }
+    
+    ::ng-deep .fullpage.section-17 {
+      transform: translateY(-1700vh);
+    }
+    
+    ::ng-deep .fullpage.section-18 {
+      transform: translateY(-1800vh);
+    }
+    
+    ::ng-deep .fullpage.section-19 {
+      transform: translateY(-1900vh);
+    }
+    
+    ::ng-deep .fullpage.section-20 {
+      transform: translateY(-2000vh);
+    }
+    
+    ::ng-deep .fullpage.last-section {
+      transform: translateY(calc(100vh - 100%));
+    }
+    
     ::ng-deep body {
       padding: 0;
       margin: 0;
@@ -50,9 +137,8 @@ import {SectionModel} from './section.model';
     }
   `],
   template: `
-    <div class="fullpage"
-         *ngIf="sections"
-         [class.scrolling]="isScrolling"
+    <div *ngIf="sections"
+         [ngClass]="sectionIndex + 1 === sections?.length ? 'fullpage last-section' : 'fullpage section-' + sectionIndex"
          aoSwipeListener (swipeEvent)="swipeEventHandler($event)">
       <ng-content></ng-content>
     </div>
@@ -66,7 +152,6 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   public static activeClass = 'fullpage-active';
 
   public window;
-  public wheelFunction;
   public activeSection;
   public previousSectionIndex: number;
   public sectionIndex: number;
@@ -82,8 +167,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public scrollSensitivity = 50;
   @Output() public sectionChange = new EventEmitter<string>();
 
-  public constructor(private scrollToService: ScrollToService,
-                     private route: ActivatedRoute,
+  public constructor(private route: ActivatedRoute,
                      private router: Router,
                      @Inject(DOCUMENT) private document: any,
                      private windowRef: WindowRefService,
@@ -99,21 +183,13 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     setTimeout(() => {
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
-      // only enable wheel events when section scrolling is enabled
-      this.wheelFunction = this.window.onwheel;
-      this.window.onwheel = () => this.sectionScrollingEnabled;
-
       const fragment = this.route.snapshot.fragment;
       const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
       this.switchSections(index);
-      this.scroll(index);
     });
   }
 
   public ngOnDestroy() {
-    if (this.wheelFunction) {
-      this.window.onwheel = this.wheelFunction;
-    }
     this.scrollEventService.removeListener(FullpageComponent.eventListenerKey);
   }
 
@@ -151,7 +227,11 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   private doScroll(index: number) {
     this.isScrolling = true;
     this.switchSections(index);
-    this.invokeScroll();
+    const section = this.sections[this.sectionIndex];
+    this.sectionChange.emit(section.url);
+    setTimeout(() => {
+      this.isScrolling = false;
+    });
   }
 
   private switchSections(index: number) {
@@ -170,30 +250,11 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     }
 
     this.sections.forEach((s) => s.active = s.url === section.url);
-    this.sectionChange.emit(section.url);
-  }
-
-  private invokeScroll() {
-    const section = this.sections[this.sectionIndex];
-    const config: ScrollToConfigOptions = {
-      target: section.url,
-    };
-
     if (section.pageTop) {
       this.router.navigate([this.window.location.pathname]);
     } else {
       this.router.navigate([this.window.location.pathname], {fragment: section.url});
     }
-    setTimeout(() => {
-      this.scrollToService.scrollTo(config)
-        .pipe(
-          finalize(() => {
-            setTimeout(() => {
-              this.isScrolling = false;
-            });
-          }),
-        ).subscribe();
-    }, 150);
   }
 
   private checkFocus() {
@@ -260,18 +321,6 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     }
   }
 
-  @HostListener('window:mousemove', ['$event'])
-  public fullpageSelectText(event: MouseEvent) {
-    if (event.buttons) {
-      const sectionPosition = this.calcSectionPosition();
-      if (sectionPosition.atSectionTop && event.clientY <= 0 ||
-        sectionPosition.atSectionBottom && event.clientY >= this.window.innerHeight - 5) {
-        console.log('blocking');
-        event.preventDefault();
-      }
-    }
-  }
-
   @HostListener('window:wheel', ['$event'])
   public fullpageWindowScroll(event: WheelEvent) {
     const newWheelEventDate = Date.now();
@@ -287,8 +336,8 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
   public fullpageArrowUpEvent(event: KeyboardEvent) {
-    if (this.checkFocus()) {
-      this.handleScrollEvent(event, ScrollDirection.Up);
+    if (!this.lockScrolling && this.checkFocus()) {
+      this.handlePageScrolling(event, ScrollDirection.Up);
     }
   }
 
@@ -296,18 +345,8 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
   public fullpageArrowDownEvent(event: KeyboardEvent) {
-    if (this.checkFocus()) {
-      this.handleScrollEvent(event, ScrollDirection.Down);
+    if (!this.lockScrolling && this.checkFocus()) {
+      this.handlePageScrolling(event, ScrollDirection.Down);
     }
-  }
-
-  @HostListener('window:resize')
-  public fullpageResizeEvent() {
-    const section = this.sections[this.sectionIndex];
-    const config: ScrollToConfigOptions = {
-      target: section.url,
-    };
-
-    this.scrollToService.scrollTo(config);
   }
 }

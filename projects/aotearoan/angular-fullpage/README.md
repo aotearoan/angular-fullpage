@@ -100,7 +100,7 @@ Add the page sections to the template by using the class _fullpage-section_ and 
 </ao-fullpage>
 ```
 
-To add a section which is not full height, but fits the content, use the class _fullpage-section-fit-content_
+To make a the final section which is not full height but fits the content (e.g. a page footer), use the class _fullpage-section-fit-content_
 ```html
   <section class="fullpage-section-fit-content" [id]="sections[3].url">
     <app-section [section]="sections[3]">
