@@ -164,7 +164,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
-  @Input() public scrollSensitivity = 50;
+  @Input() public scrollSensitivity = 75;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private route: ActivatedRoute,
@@ -186,6 +186,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       const fragment = this.route.snapshot.fragment;
       const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
       this.switchSections(index);
+      this.scroll(index);
     });
   }
 
