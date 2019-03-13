@@ -2,6 +2,9 @@
   <section class="fullpage-section" [id]="sections[0].url">
     <app-section [section]="sections[0]">
       <h1>A fullpage section</h1>
+      <p>
+        <a [routerLink]="'/'" [fragment]="'section-c'">Take me to #section-c</a>
+      </p>
     </app-section>
   </section>
   <section class="fullpage-section" [id]="sections[1].url">

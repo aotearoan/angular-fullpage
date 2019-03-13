@@ -1,13 +1,13 @@
-import {DOCUMENT, PlatformLocation} from '@angular/common';
-import {AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnDestroy, Output} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {SwipeDirection} from '../swipe-listener/swipe-direction.model';
-import {SwipeEvent} from '../swipe-listener/swipe.event';
-import {WindowRefService} from '../window-ref/window-ref.service';
-import {ScrollDirection} from './scroll-direction.enum';
-import {IScrollEventListener, ScrollEventService} from './scroll-event.service';
-import {SectionPositionModel} from './section-position.model';
-import {SectionModel} from './section.model';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnDestroy, Output } from '@angular/core';
+import { ActivatedRoute, Router, Scroll } from '@angular/router';
+import { SwipeDirection } from '../swipe-listener/swipe-direction.model';
+import { SwipeEvent } from '../swipe-listener/swipe.event';
+import { WindowRefService } from '../window-ref/window-ref.service';
+import { ScrollDirection } from './scroll-direction.enum';
+import { IScrollEventListener, ScrollEventService } from './scroll-event.service';
+import { SectionPositionModel } from './section-position.model';
+import { SectionModel } from './section.model';
 
 @Component({
   selector: 'ao-fullpage',
@@ -184,9 +184,12 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
       const fragment = this.route.snapshot.fragment;
-      const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
-      this.switchSections(index);
-      this.scroll(index);
+      this.switchSectionsByFragment(fragment);
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof Scroll) {
+        this.switchSectionsByFragment(event.anchor);
+      }
     });
   }
 
@@ -233,6 +236,14 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     setTimeout(() => {
       this.isScrolling = false;
     });
+  }
+
+  private switchSectionsByFragment(fragment: string) {
+    const index = this.sections.findIndex((s) => s.url === fragment);
+    if (index !== -1) {
+      this.switchSections(index);
+      this.scroll(index);
+    }
   }
 
   private switchSections(index: number) {

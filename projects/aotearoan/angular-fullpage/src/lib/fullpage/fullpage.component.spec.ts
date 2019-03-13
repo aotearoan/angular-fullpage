@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { FullpageTestModule } from './fullpage-test.module';
 import { FullpageComponent } from './fullpage.component';
 import { FullpageModule } from './fullpage.module';
+
 @Component({
   template: `
     <ao-fullpage [sections]="sections">
