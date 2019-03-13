@@ -239,7 +239,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   }
 
   private switchSectionsByFragment(fragment: string) {
-    const index = this.sections.findIndex((s) => s.url === fragment);
+    const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
     if (index !== -1) {
       this.switchSections(index);
       this.scroll(index);
