@@ -183,7 +183,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     setTimeout(() => {
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
-      const fragment = this.route.snapshot.fragment;
+      const fragment = this.route.snapshot.fragment || this.sections[0].url;
       this.switchSectionsByFragment(fragment);
     });
     this.router.events.subscribe((event) => {
@@ -239,7 +239,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   }
 
   private switchSectionsByFragment(fragment: string) {
-    const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
+    const index = this.sections.findIndex((s) => s.url === fragment);
     if (index !== -1) {
       this.switchSections(index);
       this.scroll(index);
