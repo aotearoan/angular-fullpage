@@ -29,6 +29,7 @@ import { SectionModel } from './section.model';
       overflow-y: scroll;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
 
     ::ng-deep .fullpage .fullpage-section-fit-content {
