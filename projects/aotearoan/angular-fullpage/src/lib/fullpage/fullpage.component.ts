@@ -190,7 +190,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     });
     this.router.events.subscribe((event) => {
       if (event instanceof Scroll) {
-        this.switchSectionsByFragment(event.anchor);
+        this.switchSectionsByFragment(event.anchor || this.sections[0].url);
       }
     });
   }
