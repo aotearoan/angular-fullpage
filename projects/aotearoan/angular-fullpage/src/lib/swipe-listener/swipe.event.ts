@@ -4,6 +4,6 @@ import {SwipeDirection} from './swipe-direction.model';
 export class SwipeEvent {
   public inputType: InputType;
   public direction: SwipeDirection;
-  public startEvent: TouchEvent;
-  public endEvent: TouchEvent;
+  public startEvent: Event;
+  public endEvent: Event;
 }

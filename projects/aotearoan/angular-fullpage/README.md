@@ -13,6 +13,7 @@ A pure Angular / Typescript component providing vertical responsive full page sc
 * Full page sections with smooth scrolling navigation.
 * Mousewheel, arrow key, space (shift+space) navigation.
 * Touch device support (swipe up, swipe down).
+* Pointer device support (Edge on Surface).
 * Automatically allows for scrolling within a section when the content is longer than the screen.
 * Shorter sections can be specified which fit the content, not the full page height (e.g for a short footer).
 * Ability to lock/unlock scrolling dynamically in code.
@@ -120,4 +121,4 @@ To dynamically lock the scrolling, i.e. prevent scrolling up or down to other se
 ### scrollSensitivity
 When rapidly scrolling with the mouse wheel a large number of events are generated in quick succession. These need to be consumed and discarded (prevent default) in order to ensure the user doesn't scroll through multiple sections at once. This is achieved by measuring the time between events. If this time is greater than the _scrollSensitivity_ it indicates a pause between wheel events, i.e. a new user action. If not then the event is discarded.
 
-This is configurable via the _scrollSensitivity_ attribute. The default value is **75ms** which gives reasonable results, however the value can be adjusted lower to increase sensitivity at the risk of letting through too many scroll events or higher which may result in discarding new genuine user wheel events.
+This is configurable via the _scrollSensitivity_ attribute. The default value is **250ms** which gives reasonable results, however the value can be adjusted lower to increase sensitivity at the risk of letting through too many scroll events or higher which may result in discarding new genuine user wheel events.

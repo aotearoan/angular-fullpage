@@ -166,7 +166,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
-  @Input() public scrollSensitivity = 75;
+  @Input() public scrollSensitivity = 250;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private route: ActivatedRoute,
@@ -303,7 +303,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   }
 
   private calculateSectionScrollingState(scrollDirection: ScrollDirection, event) {
-    if (event.type === 'wheel' || event.type === 'touchend') {
+    if (event.type === 'wheel' || event.type === 'touchend' || event.type.indexOf('pointer') === 0) {
       const sectionPosition = this.calcSectionPosition();
       if (scrollDirection === ScrollDirection.Down && !sectionPosition.atSectionBottom ||
         scrollDirection === ScrollDirection.Up && !sectionPosition.atSectionTop) {

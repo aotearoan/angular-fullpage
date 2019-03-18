@@ -8,15 +8,61 @@ import {SwipeEvent} from './swipe.event';
 })
 export class SwipeListenerDirective {
   public lastTouchStartEvent: TouchEvent;
+  public pointerEvents: PointerEvent[] = [];
+  public handlePointerTimer;
   public multitouch: boolean;
   @Input() public directSwipeTolerance = 30;
   @Input() public stylusSwipeTolerance = 10;
   @Output() public swipeEvent = new EventEmitter<SwipeEvent>();
 
+  private handlePointerEvents() {
+    const multitouch = this.pointerEvents.filter((event) => event.type === 'pointerdown').length > 1;
+
+    if (!multitouch) {
+      const endEvent = this.pointerEvents[0];
+      const startEvent = this.pointerEvents[this.pointerEvents.length - 1];
+      const startX = startEvent.pageX;
+      const startY = startEvent.pageY;
+
+      const inputType = startEvent.pointerType === 'touch' ? InputType.Direct : InputType.Stylus;
+      const swipeTolerance = this.stylusSwipeTolerance;
+
+      const endX = endEvent.pageX;
+      const endY = endEvent.pageY;
+
+      const xShift = Math.abs(startX - endX);
+      const yShift = Math.abs(startY - endY);
+
+      if (xShift > swipeTolerance || yShift > swipeTolerance) {
+        const direction = xShift >= yShift
+          ? (startX - endX > 0 ? SwipeDirection.Left : SwipeDirection.Right)
+          : (startY - endY > 0 ? SwipeDirection.Up : SwipeDirection.Down);
+        this.swipeEvent.emit({
+          inputType,
+          direction,
+          startEvent,
+          endEvent,
+        });
+      }
+    }
+    this.pointerEvents = [];
+  }
+
+  @HostListener('window:pointerdown', ['$event'])
+  @HostListener('window:pointerover', ['$event'])
+  @HostListener('window:pointerout', ['$event'])
+  public pointerEventListener(event: PointerEvent) {
+    if (this.pointerEvents.length === 0) {
+      this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
+    }
+    this.pointerEvents.push(event);
+    event.preventDefault();
+  }
+
   @HostListener('window:touchstart', ['$event'])
   @HostListener('window:touchmove', ['$event'])
   @HostListener('window:touchend', ['$event'])
-  public swipeEventListener(event: TouchEvent) {
+  public touchEventListener(event: TouchEvent) {
     if (event.type === 'touchstart') {
       this.multitouch = event.touches.length === 2;
       this.lastTouchStartEvent = event;
