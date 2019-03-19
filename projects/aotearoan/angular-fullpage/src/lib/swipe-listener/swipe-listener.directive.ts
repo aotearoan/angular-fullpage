@@ -1,4 +1,5 @@
-import {Directive, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import inViewport from 'in-viewport';
 import {InputType} from './input-type.model';
 import {SwipeDirection} from './swipe-direction.model';
 import {SwipeEvent} from './swipe.event';
@@ -15,6 +16,9 @@ export class SwipeListenerDirective {
   @Input() public directSwipeTolerance = 30;
   @Input() public stylusSwipeTolerance = 10;
   @Output() public swipeEvent = new EventEmitter<SwipeEvent>();
+
+  public constructor(private readonly elem: ElementRef) {
+  }
 
   private preventDefault(event: Event) {
     if (event && event.cancelable) {
@@ -59,12 +63,14 @@ export class SwipeListenerDirective {
   @HostListener('window:pointerover', ['$event'])
   @HostListener('window:pointerout', ['$event'])
   public pointerEventListener(event: PointerEvent) {
-    if (event.pointerType !== 'mouse' && !this.touchEnabled) {
-      if (this.pointerEvents.length === 0) {
-        this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
+    if (inViewport(this.elem.nativeElement)) {
+      if (event.pointerType !== 'mouse' && !this.touchEnabled) {
+        if (this.pointerEvents.length === 0) {
+          this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
+        }
+        this.pointerEvents.push(event);
+        this.preventDefault(event);
       }
-      this.pointerEvents.push(event);
-      this.preventDefault(event);
     }
   }
 
@@ -72,44 +78,46 @@ export class SwipeListenerDirective {
   @HostListener('window:touchmove', ['$event'])
   @HostListener('window:touchend', ['$event'])
   public touchEventListener(event: TouchEvent) {
-    if (event.type === 'touchstart') {
-      this.touchEnabled = true;
-      this.multitouch = event.touches.length === 2;
-      this.lastTouchStartEvent = event;
-      this.preventDefault(event);
-    } else if (event.type === 'touchend') {
-      if (!this.multitouch) {
-        const startX = this.lastTouchStartEvent.touches[0].screenX;
-        const startY = this.lastTouchStartEvent.touches[0].screenY;
+    if (inViewport(this.elem.nativeElement)) {
+      if (event.type === 'touchstart') {
+        this.touchEnabled = true;
+        this.multitouch = event.touches.length === 2;
+        this.lastTouchStartEvent = event;
+        this.preventDefault(event);
+      } else if (event.type === 'touchend') {
+        if (!this.multitouch) {
+          const startX = this.lastTouchStartEvent.touches[0].screenX;
+          const startY = this.lastTouchStartEvent.touches[0].screenY;
 
-        const inputType = this.lastTouchStartEvent.touches[0].touchType === InputType.Stylus ? InputType.Stylus : InputType.Direct;
-        const swipeTolerance = inputType === InputType.Stylus ? this.stylusSwipeTolerance : this.directSwipeTolerance;
+          const inputType = this.lastTouchStartEvent.touches[0].touchType === InputType.Stylus ? InputType.Stylus : InputType.Direct;
+          const swipeTolerance = inputType === InputType.Stylus ? this.stylusSwipeTolerance : this.directSwipeTolerance;
 
-        const endX = event.changedTouches[0].screenX;
-        const endY = event.changedTouches[0].screenY;
+          const endX = event.changedTouches[0].screenX;
+          const endY = event.changedTouches[0].screenY;
 
-        const xShift = Math.abs(startX - endX);
-        const yShift = Math.abs(startY - endY);
+          const xShift = Math.abs(startX - endX);
+          const yShift = Math.abs(startY - endY);
 
-        if (xShift > swipeTolerance || yShift > swipeTolerance) {
-          const direction = xShift >= yShift
-            ? (startX - endX > 0 ? SwipeDirection.Left : SwipeDirection.Right)
-            : (startY - endY > 0 ? SwipeDirection.Up : SwipeDirection.Down);
-          this.swipeEvent.emit({
-            inputType,
-            direction,
-            startEvent: this.lastTouchStartEvent,
-            endEvent: event,
-          });
-        } else {
-          event.target.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-          this.preventDefault(event);
+          if (xShift > swipeTolerance || yShift > swipeTolerance) {
+            const direction = xShift >= yShift
+              ? (startX - endX > 0 ? SwipeDirection.Left : SwipeDirection.Right)
+              : (startY - endY > 0 ? SwipeDirection.Up : SwipeDirection.Down);
+            this.swipeEvent.emit({
+              inputType,
+              direction,
+              startEvent: this.lastTouchStartEvent,
+              endEvent: event,
+            });
+          } else {
+            event.target.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            this.preventDefault(event);
+          }
         }
+        this.lastTouchStartEvent = undefined;
+        this.multitouch = undefined;
+      } else {
+        this.preventDefault(event);
       }
-      this.lastTouchStartEvent = undefined;
-      this.multitouch = undefined;
-    } else {
-      this.preventDefault(event);
     }
   }
 }
