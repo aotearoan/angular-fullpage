@@ -166,7 +166,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
-  @Input() public scrollSensitivity = 250;
+  @Input() public scrollSensitivity = 125;
   @Output() public sectionChange = new EventEmitter<string>();
 
   public constructor(private route: ActivatedRoute,
@@ -183,6 +183,11 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
 
   public ngAfterViewInit() {
     setTimeout(() => {
+      // if IE then change the scroll sensitivity as the events trickle through much slower
+      if (this.window.navigator.msPointerEnabled && this.window.navigator.userAgent.indexOf('Windows') >= 0) {
+        this.scrollSensitivity = 3 * this.scrollSensitivity;
+        console.log(`setting scroll sensitivity to ${this.scrollSensitivity}ms`);
+      }
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
       const fragment = this.route.snapshot.fragment || this.sections[0].url;
@@ -348,7 +353,6 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     this.lastWheelEventDate = newWheelEventDate;
 
     if (eventTimeDelta > this.scrollSensitivity) {
-      console.log('delta = ' + eventTimeDelta);
       this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
     }
   }
