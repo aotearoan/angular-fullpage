@@ -11,9 +11,16 @@ export class SwipeListenerDirective {
   public pointerEvents: PointerEvent[] = [];
   public handlePointerTimer;
   public multitouch: boolean;
+  public touchEnabled = false;
   @Input() public directSwipeTolerance = 30;
   @Input() public stylusSwipeTolerance = 10;
   @Output() public swipeEvent = new EventEmitter<SwipeEvent>();
+
+  private preventDefault(event: Event) {
+    if (event && event.cancelable) {
+      event.preventDefault();
+    }
+  }
 
   private handlePointerEvents() {
     const multitouch = this.pointerEvents.filter((event) => event.type === 'pointerdown').length > 1;
@@ -52,11 +59,13 @@ export class SwipeListenerDirective {
   @HostListener('window:pointerover', ['$event'])
   @HostListener('window:pointerout', ['$event'])
   public pointerEventListener(event: PointerEvent) {
-    if (this.pointerEvents.length === 0) {
-      this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
+    if (event.pointerType !== 'mouse' && !this.touchEnabled) {
+      if (this.pointerEvents.length === 0) {
+        this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
+      }
+      this.pointerEvents.push(event);
+      this.preventDefault(event);
     }
-    this.pointerEvents.push(event);
-    event.preventDefault();
   }
 
   @HostListener('window:touchstart', ['$event'])
@@ -64,9 +73,10 @@ export class SwipeListenerDirective {
   @HostListener('window:touchend', ['$event'])
   public touchEventListener(event: TouchEvent) {
     if (event.type === 'touchstart') {
+      this.touchEnabled = true;
       this.multitouch = event.touches.length === 2;
       this.lastTouchStartEvent = event;
-      event.preventDefault();
+      this.preventDefault(event);
     } else if (event.type === 'touchend') {
       if (!this.multitouch) {
         const startX = this.lastTouchStartEvent.touches[0].screenX;
@@ -92,14 +102,14 @@ export class SwipeListenerDirective {
             endEvent: event,
           });
         } else {
-            event.target.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-            event.preventDefault();
+          event.target.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+          this.preventDefault(event);
         }
       }
       this.lastTouchStartEvent = undefined;
       this.multitouch = undefined;
     } else {
-      event.preventDefault();
+      this.preventDefault(event);
     }
   }
 }

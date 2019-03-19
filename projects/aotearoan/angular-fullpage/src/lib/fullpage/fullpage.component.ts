@@ -210,6 +210,12 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     }
   }
 
+  private preventDefault(event: Event) {
+    if (event && event.cancelable) {
+      event.preventDefault();
+    }
+  }
+
   public scroll(index: number) {
     if (!this.lockScrolling) {
       this.doScroll(index);
@@ -220,14 +226,14 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     if (this.sectionIndex > 0) {
       this.doScroll(this.sectionIndex - 1);
     }
-    event.preventDefault();
+    this.preventDefault(event);
   }
 
   public scrollDown(event: Event) {
     if (this.sectionIndex < this.sections.length - 1) {
       this.doScroll(this.sectionIndex + 1);
     }
-    event.preventDefault();
+    this.preventDefault(event);
   }
 
   private doScroll(index: number) {
@@ -290,7 +296,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
           break;
       }
     } else {
-      event.preventDefault();
+      this.preventDefault(event);
     }
   }
 
@@ -322,7 +328,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     if (!this.isScrolling) {
       if (this.lockScrolling) {
         if (!this.sectionScrollingEnabled) {
-          event.preventDefault();
+          this.preventDefault(event);
         }
       } else {
         // only section scrolling can be invoked if scrolling is locked
@@ -331,17 +337,18 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
         }
       }
     } else {
-      event.preventDefault();
+      this.preventDefault(event);
     }
   }
 
   @HostListener('window:wheel', ['$event'])
   public fullpageWindowScroll(event: WheelEvent) {
-    const newWheelEventDate = Date.now();
+    const newWheelEventDate = event.timeStamp;
     const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
     this.lastWheelEventDate = newWheelEventDate;
 
     if (eventTimeDelta > this.scrollSensitivity) {
+      console.log('delta = ' + eventTimeDelta);
       this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
     }
   }
