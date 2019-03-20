@@ -20,12 +20,6 @@ export class SwipeListenerDirective {
   public constructor(private readonly elem: ElementRef) {
   }
 
-  private preventDefault(event: Event) {
-    if (event && event.cancelable) {
-      event.preventDefault();
-    }
-  }
-
   private handlePointerEvents() {
     const multitouch = this.pointerEvents.filter((event) => event.type === 'pointerdown').length > 1;
 
@@ -69,7 +63,6 @@ export class SwipeListenerDirective {
           this.handlePointerTimer = setTimeout(() => this.handlePointerEvents(), 600);
         }
         this.pointerEvents.push(event);
-        this.preventDefault(event);
       }
     }
   }
@@ -83,7 +76,6 @@ export class SwipeListenerDirective {
         this.touchEnabled = true;
         this.multitouch = event.touches.length === 2;
         this.lastTouchStartEvent = event;
-        this.preventDefault(event);
       } else if (event.type === 'touchend') {
         if (!this.multitouch) {
           const startX = this.lastTouchStartEvent.touches[0].screenX;
@@ -108,15 +100,10 @@ export class SwipeListenerDirective {
               startEvent: this.lastTouchStartEvent,
               endEvent: event,
             });
-          } else {
-            event.target.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-            this.preventDefault(event);
           }
         }
         this.lastTouchStartEvent = undefined;
         this.multitouch = undefined;
-      } else {
-        this.preventDefault(event);
       }
     }
   }

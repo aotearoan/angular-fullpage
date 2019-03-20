@@ -130,6 +130,7 @@ import { SectionModel } from './section.model';
     ::ng-deep .fullpage-section {
       -ms-overflow-style: none;
       overflow: auto;
+      overscroll-behavior-y: none;
     }
 
     ::ng-deep html::-webkit-scrollbar,
