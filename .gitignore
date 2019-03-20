@@ -44,3 +44,6 @@ Thumbs.db
 
 # ng-packagr
 aotearoan-angular-fullpage.metadata.json
+
+yarn.lock
+package-lock.json

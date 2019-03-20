@@ -353,7 +353,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
     this.lastWheelEventDate = newWheelEventDate;
 
-    if (eventTimeDelta > this.scrollSensitivity) {
+    if (event.deltaY > event.deltaX && eventTimeDelta > this.scrollSensitivity) {
       this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
     }
   }
