@@ -11,7 +11,7 @@ import { SectionModel } from './section.model';
 
 @Component({
   selector: 'ao-fullpage',
-  styles: [`
+  styles: [`    
     ::ng-deep .fullpage {
       display: flex;
       flex-direction: column;
@@ -26,6 +26,7 @@ import { SectionModel } from './section.model';
     ::ng-deep .fullpage .fullpage-section {
       width: 100vw;
       height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
       overflow-y: scroll;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
@@ -38,86 +39,107 @@ import { SectionModel } from './section.model';
 
     ::ng-deep .fullpage.section-1 {
       transform: translateY(-100vh);
+      transform: translateY(calc(var(--vh, 1vh) * -100));
     }
     
     ::ng-deep .fullpage.section-2 {
       transform: translateY(-200vh);
+      transform: translateY(calc(var(--vh, 1vh) * -200));
     }
     
     ::ng-deep .fullpage.section-3 {
       transform: translateY(-300vh);
+      transform: translateY(calc(var(--vh, 1vh) * -300));
     }
     
     ::ng-deep .fullpage.section-4 {
       transform: translateY(-400vh);
+      transform: translateY(calc(var(--vh, 1vh) * -400));
     }
     
     ::ng-deep .fullpage.section-5 {
       transform: translateY(-500vh);
+      transform: translateY(calc(var(--vh, 1vh) * -500));
     }
     
     ::ng-deep .fullpage.section-6 {
       transform: translateY(-600vh);
+      transform: translateY(calc(var(--vh, 1vh) * -600));
     }
     
     ::ng-deep .fullpage.section-7 {
       transform: translateY(-700vh);
+      transform: translateY(calc(var(--vh, 1vh) * -700));
     }
     
     ::ng-deep .fullpage.section-8 {
       transform: translateY(-800vh);
+      transform: translateY(calc(var(--vh, 1vh) * -800));
     }
     
     ::ng-deep .fullpage.section-9 {
       transform: translateY(-900vh);
+      transform: translateY(calc(var(--vh, 1vh) * -900));
     }
     
     ::ng-deep .fullpage.section-10 {
       transform: translateY(-1000vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1000));
     }
     
     ::ng-deep .fullpage.section-11 {
       transform: translateY(-1100vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1100));
     }
     
     ::ng-deep .fullpage.section-12 {
       transform: translateY(-1200vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1200));
     }
     
     ::ng-deep .fullpage.section-13 {
       transform: translateY(-1300vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1300));
     }
     
     ::ng-deep .fullpage.section-14 {
       transform: translateY(-1400vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1400));
     }
     
     ::ng-deep .fullpage.section-15 {
       transform: translateY(-1500vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1500));
     }
     
     ::ng-deep .fullpage.section-16 {
       transform: translateY(-1600vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1600));
     }
     
     ::ng-deep .fullpage.section-17 {
       transform: translateY(-1700vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1700));
     }
     
     ::ng-deep .fullpage.section-18 {
       transform: translateY(-1800vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1800));
     }
     
     ::ng-deep .fullpage.section-19 {
       transform: translateY(-1900vh);
+      transform: translateY(calc(var(--vh, 1vh) * -1900));
     }
     
     ::ng-deep .fullpage.section-20 {
       transform: translateY(-2000vh);
+      transform: translateY(calc(var(--vh, 1vh) * -2000));
     }
     
     ::ng-deep .fullpage.last-section {
-      transform: translateY(calc(100vh - 100%));
+      transform: translateY(100vh) translateY(-100%);
+      transform: translateY(calc(var(--vh, 1vh) * 100 - 100%));
     }
     
     ::ng-deep body {
@@ -184,6 +206,7 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
 
   public ngAfterViewInit() {
     setTimeout(() => {
+      this.fullpageResizeEvent(null);
       // if IE then change the scroll sensitivity as the events trickle through much slower
       if (this.window.navigator.msPointerEnabled && this.window.navigator.userAgent.indexOf('Windows') >= 0) {
         this.scrollSensitivity = 3 * this.scrollSensitivity;
@@ -374,5 +397,11 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     if (!this.lockScrolling && this.checkFocus()) {
       this.handlePageScrolling(event, ScrollDirection.Down);
     }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  public fullpageResizeEvent(event: UIEvent) {
+    const vh = window.innerHeight * 0.01;
+    this.document.documentElement.style.setProperty('--vh', `${vh}px`);
   }
 }
