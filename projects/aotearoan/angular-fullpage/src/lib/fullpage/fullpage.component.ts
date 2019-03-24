@@ -305,7 +305,9 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     }
     const element = this.document.getElementById(section.url);
     if (element) {
-      element.scrollTo(0, 0);
+      if (element.scrollTo) {
+        element.scrollTo(0, 0);
+      }
     }
   }
 
