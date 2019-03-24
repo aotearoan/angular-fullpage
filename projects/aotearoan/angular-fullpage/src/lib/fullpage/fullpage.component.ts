@@ -210,17 +210,16 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       // if IE then change the scroll sensitivity as the events trickle through much slower
       if (this.window.navigator.msPointerEnabled && this.window.navigator.userAgent.indexOf('Windows') >= 0) {
         this.scrollSensitivity = 3 * this.scrollSensitivity;
-        console.log(`setting scroll sensitivity to ${this.scrollSensitivity}ms`);
       }
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
       const fragment = this.route.snapshot.fragment || this.sections[0].url;
       this.switchSectionsByFragment(fragment);
     });
-    this.router.events.subscribe((event) => {
-      if (event instanceof Scroll) {
-        this.switchSectionsByFragment(event.anchor || this.sections[0].url);
-      }
+    this.route.fragment.subscribe((fragment) => {
+      setTimeout(() => {
+        this.switchSectionsByFragment(fragment || this.sections[0].url);
+      });
     });
   }
 
@@ -305,7 +304,9 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       this.router.navigate([this.window.location.pathname], {fragment: section.url});
     }
     const element = this.document.getElementById(section.url);
-    element.scrollTo(0, 0);
+    if (element) {
+      element.scrollTo(0, 0);
+    }
   }
 
   private checkFocus() {
