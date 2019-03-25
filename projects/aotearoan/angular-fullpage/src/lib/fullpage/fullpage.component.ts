@@ -1,6 +1,7 @@
 import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnDestroy, Output } from '@angular/core';
-import { ActivatedRoute, Router, Scroll } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import inViewport from 'in-viewport';
 import { SwipeDirection } from '../swipe-listener/swipe-direction.model';
 import { SwipeEvent } from '../swipe-listener/swipe.event';
 import { WindowRefService } from '../window-ref/window-ref.service';
@@ -377,12 +378,14 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
 
   @HostListener('window:wheel', ['$event'])
   public fullpageWindowScroll(event: WheelEvent) {
-    const newWheelEventDate = event.timeStamp;
-    const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
-    this.lastWheelEventDate = newWheelEventDate;
+    if (inViewport(this.activeSection)) {
+      const newWheelEventDate = event.timeStamp;
+      const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
+      this.lastWheelEventDate = newWheelEventDate;
 
-    if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && eventTimeDelta > this.scrollSensitivity) {
-      this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
+      if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && eventTimeDelta > this.scrollSensitivity) {
+        this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
+      }
     }
   }
 
@@ -390,8 +393,10 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
   public fullpageArrowUpEvent(event: KeyboardEvent) {
-    if (!this.lockScrolling && this.checkFocus()) {
-      this.handlePageScrolling(event, ScrollDirection.Up);
+    if (inViewport(this.activeSection)) {
+      if (!this.lockScrolling && this.checkFocus()) {
+        this.handlePageScrolling(event, ScrollDirection.Up);
+      }
     }
   }
 
@@ -399,8 +404,10 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
   public fullpageArrowDownEvent(event: KeyboardEvent) {
-    if (!this.lockScrolling && this.checkFocus()) {
-      this.handlePageScrolling(event, ScrollDirection.Down);
+    if (inViewport(this.activeSection)) {
+      if (!this.lockScrolling && this.checkFocus()) {
+        this.handlePageScrolling(event, ScrollDirection.Down);
+      }
     }
   }
 
