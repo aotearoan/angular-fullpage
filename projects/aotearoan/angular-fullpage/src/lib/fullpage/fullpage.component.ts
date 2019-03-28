@@ -298,10 +298,13 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     }
 
     this.sections.forEach((s) => s.active = s.url === section.url);
+    const baseHref = this.platformLocation.getBaseHrefFromDOM();
+    const pathName = this.window.location.pathname;
+    const adjustedPathName = pathName.indexOf(baseHref) === 0 ? pathName.substring(baseHref.length) : pathName;
     if (section.pageTop) {
-      this.router.navigate([this.window.location.pathname]);
+      this.router.navigate([adjustedPathName]);
     } else {
-      this.router.navigate([this.window.location.pathname], {fragment: section.url});
+      this.router.navigate([adjustedPathName], {fragment: section.url});
     }
     const element = this.document.getElementById(section.url);
     if (element) {
