@@ -1,7 +1,6 @@
 import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, HostListener, Inject, Input, OnDestroy, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import inViewport from 'in-viewport';
 import { SwipeDirection } from '../swipe-listener/swipe-direction.model';
 import { SwipeEvent } from '../swipe-listener/swipe.event';
 import { WindowRefService } from '../window-ref/window-ref.service';
@@ -12,8 +11,8 @@ import { SectionModel } from './section.model';
 
 @Component({
   selector: 'ao-fullpage',
-  styles: [`    
-    ::ng-deep .fullpage {
+  styles: [`
+    .fullpage {
       display: flex;
       flex-direction: column;
       margin: 0;
@@ -22,127 +21,12 @@ import { SectionModel } from './section.model';
       left: 0;
       overflow: hidden;
       transition: transform .7s ease-in;
-    }
-
-    ::ng-deep .fullpage .fullpage-section {
       width: 100vw;
-      height: 100vh;
       height: calc(var(--vh, 1vh) * 100);
-      overflow-y: scroll;
-      overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
 
-    ::ng-deep .fullpage .fullpage-section-fit-content {
-      width: 100vw;
-    }
-
-    ::ng-deep .fullpage.section-1 {
-      transform: translateY(-100vh);
-      transform: translateY(calc(var(--vh, 1vh) * -100));
-    }
-    
-    ::ng-deep .fullpage.section-2 {
-      transform: translateY(-200vh);
-      transform: translateY(calc(var(--vh, 1vh) * -200));
-    }
-    
-    ::ng-deep .fullpage.section-3 {
-      transform: translateY(-300vh);
-      transform: translateY(calc(var(--vh, 1vh) * -300));
-    }
-    
-    ::ng-deep .fullpage.section-4 {
-      transform: translateY(-400vh);
-      transform: translateY(calc(var(--vh, 1vh) * -400));
-    }
-    
-    ::ng-deep .fullpage.section-5 {
-      transform: translateY(-500vh);
-      transform: translateY(calc(var(--vh, 1vh) * -500));
-    }
-    
-    ::ng-deep .fullpage.section-6 {
-      transform: translateY(-600vh);
-      transform: translateY(calc(var(--vh, 1vh) * -600));
-    }
-    
-    ::ng-deep .fullpage.section-7 {
-      transform: translateY(-700vh);
-      transform: translateY(calc(var(--vh, 1vh) * -700));
-    }
-    
-    ::ng-deep .fullpage.section-8 {
-      transform: translateY(-800vh);
-      transform: translateY(calc(var(--vh, 1vh) * -800));
-    }
-    
-    ::ng-deep .fullpage.section-9 {
-      transform: translateY(-900vh);
-      transform: translateY(calc(var(--vh, 1vh) * -900));
-    }
-    
-    ::ng-deep .fullpage.section-10 {
-      transform: translateY(-1000vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1000));
-    }
-    
-    ::ng-deep .fullpage.section-11 {
-      transform: translateY(-1100vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1100));
-    }
-    
-    ::ng-deep .fullpage.section-12 {
-      transform: translateY(-1200vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1200));
-    }
-    
-    ::ng-deep .fullpage.section-13 {
-      transform: translateY(-1300vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1300));
-    }
-    
-    ::ng-deep .fullpage.section-14 {
-      transform: translateY(-1400vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1400));
-    }
-    
-    ::ng-deep .fullpage.section-15 {
-      transform: translateY(-1500vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1500));
-    }
-    
-    ::ng-deep .fullpage.section-16 {
-      transform: translateY(-1600vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1600));
-    }
-    
-    ::ng-deep .fullpage.section-17 {
-      transform: translateY(-1700vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1700));
-    }
-    
-    ::ng-deep .fullpage.section-18 {
-      transform: translateY(-1800vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1800));
-    }
-    
-    ::ng-deep .fullpage.section-19 {
-      transform: translateY(-1900vh);
-      transform: translateY(calc(var(--vh, 1vh) * -1900));
-    }
-    
-    ::ng-deep .fullpage.section-20 {
-      transform: translateY(-2000vh);
-      transform: translateY(calc(var(--vh, 1vh) * -2000));
-    }
-    
-    ::ng-deep .fullpage.last-section {
-      transform: translateY(100vh) translateY(-100%);
-      transform: translateY(calc(var(--vh, 1vh) * 100 - 100%));
-    }
-    
     ::ng-deep body {
       padding: 0;
       margin: 0;
@@ -150,20 +34,21 @@ import { SectionModel } from './section.model';
 
     ::ng-deep html,
     ::ng-deep body,
-    ::ng-deep .fullpage-section {
+    .fullpage {
       -ms-overflow-style: none;
       overflow: auto;
     }
 
     ::ng-deep html::-webkit-scrollbar,
     ::ng-deep body::-webkit-scrollbar,
-    ::ng-deep .fullpage-section::-webkit-scrollbar {
+    .fullpage::-webkit-scrollbar {
       width: 0;
     }
   `],
   template: `
     <div *ngIf="sections"
-         [ngClass]="sectionIndex + 1 === sections?.length ? 'fullpage last-section' : 'fullpage section-' + sectionIndex"
+         class="fullpage"
+         [ngClass]="sections[sectionIndex].url"
          aoSwipeListener (swipeEvent)="swipeEventHandler($event)">
       <ng-content></ng-content>
     </div>
@@ -174,18 +59,15 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   // if focus is on a form input then disable scrolling so that the form is usable
   public static ignoreWhenFocused = ['textarea', 'input'];
   public static eventListenerKey = 'fullpage';
-  public static activeClass = 'fullpage-active';
 
   public window;
   public activeSection;
-  public previousSectionIndex: number;
-  public sectionIndex: number;
-  public isScrolling: boolean;
   public sectionScrollingEnabled: boolean;
 
   public lastWheelEventDate = 0;
 
   @Input() public sections: SectionModel[];
+  @Input() public sectionIndex: number;
   @Input() public lockScrolling: boolean;
   // ignore wheel events less than the scroll sensitivity apart, this prevents rapid
   // scrolling from changing several sections at once
@@ -213,12 +95,12 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
       }
       // listen to scroll events from other components
       this.scrollEventService.addListener(FullpageComponent.eventListenerKey, this);
-      const fragment = this.route.snapshot.fragment || this.sections[0].url;
-      this.switchSectionsByFragment(fragment);
+      const path = this.route.snapshot.url[this.route.snapshot.url.length - 1].path || this.sections[0].url;
+      this.switchSectionsByPath(path);
     });
-    this.route.fragment.subscribe((fragment) => {
+    this.route.url.subscribe((url) => {
       setTimeout(() => {
-        this.switchSectionsByFragment(fragment || this.sections[0].url);
+        this.switchSectionsByPath(url[url.length - 1].path || this.sections[0].url);
       });
     });
   }
@@ -254,55 +136,39 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
     if (this.sectionIndex > 0) {
       this.doScroll(this.sectionIndex - 1);
     }
-    this.preventDefault(event);
   }
 
   public scrollDown(event: Event) {
     if (this.sectionIndex < this.sections.length - 1) {
       this.doScroll(this.sectionIndex + 1);
     }
-    this.preventDefault(event);
   }
 
   private doScroll(index: number) {
-    this.isScrolling = true;
     this.switchSections(index);
-    const section = this.sections[this.sectionIndex];
-    this.sectionChange.emit(section.url);
-    setTimeout(() => {
-      this.isScrolling = false;
-    });
   }
 
-  private switchSectionsByFragment(fragment: string) {
-    const index = Math.max(this.sections.findIndex((s) => s.url === fragment), 0);
+  private switchSectionsByPath(path: string) {
+    const index = Math.max(this.sections.findIndex((s) => s.url === path), 0);
     this.switchSections(index);
     this.scroll(index);
   }
 
   private switchSections(index: number) {
-    this.previousSectionIndex = this.sectionIndex;
-    this.sectionIndex = index;
-
-    if (this.activeSection) {
-      this.activeSection.classList.remove(FullpageComponent.activeClass);
-    }
-
-    const section = this.sections[this.sectionIndex];
+    const section = this.sections[index];
     this.activeSection = this.document.getElementById(section.url);
-
-    if (this.activeSection) {
-      this.activeSection.classList.add(FullpageComponent.activeClass);
-    }
 
     this.sections.forEach((s) => s.active = s.url === section.url);
     const baseHref = this.platformLocation.getBaseHrefFromDOM();
-    const pathName = this.window.location.pathname;
+    const pathSegments = this.window.location.pathname.split('/');
+    pathSegments.pop();
+    pathSegments.push(section.url);
+    const pathName = pathSegments.join('/');
     const adjustedPathName = pathName.indexOf(baseHref) === 0 ? pathName.substring(baseHref.length) : pathName;
     if (section.pageTop) {
       this.router.navigate([adjustedPathName]);
     } else {
-      this.router.navigate([adjustedPathName], {fragment: section.url});
+      this.router.navigate([adjustedPathName]);
     }
     const element = this.document.getElementById(section.url);
     if (element) {
@@ -360,32 +226,26 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   private handleScrollEvent(event: Event, scrollDirection: ScrollDirection) {
     this.calculateSectionScrollingState(scrollDirection, event);
 
-    if (!this.isScrolling) {
-      if (this.lockScrolling) {
-        if (!this.sectionScrollingEnabled) {
-          this.preventDefault(event);
-        }
-      } else {
-        // only section scrolling can be invoked if scrolling is locked
-        if (!this.sectionScrollingEnabled) {
-          this.handlePageScrolling(event, scrollDirection);
-        }
+    if (this.lockScrolling) {
+      if (!this.sectionScrollingEnabled) {
+        this.preventDefault(event);
       }
     } else {
-      this.preventDefault(event);
+      // only section scrolling can be invoked if scrolling is locked
+      if (!this.sectionScrollingEnabled) {
+        this.handlePageScrolling(event, scrollDirection);
+      }
     }
   }
 
   @HostListener('window:wheel', ['$event'])
   public fullpageWindowScroll(event: WheelEvent) {
-    if (inViewport(this.activeSection)) {
-      const newWheelEventDate = event.timeStamp;
-      const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
-      this.lastWheelEventDate = newWheelEventDate;
+    const newWheelEventDate = event.timeStamp;
+    const eventTimeDelta = newWheelEventDate - this.lastWheelEventDate;
+    this.lastWheelEventDate = newWheelEventDate;
 
-      if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && eventTimeDelta > this.scrollSensitivity) {
-        this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
-      }
+    if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && eventTimeDelta > this.scrollSensitivity) {
+      this.handleScrollEvent(event, event.deltaY > 0 ? ScrollDirection.Down : ScrollDirection.Up);
     }
   }
 
@@ -393,10 +253,8 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.shift.space', ['$event'])
   public fullpageArrowUpEvent(event: KeyboardEvent) {
-    if (inViewport(this.activeSection)) {
-      if (!this.lockScrolling && this.checkFocus()) {
-        this.handlePageScrolling(event, ScrollDirection.Up);
-      }
+    if (!this.lockScrolling && this.checkFocus()) {
+      this.handlePageScrolling(event, ScrollDirection.Up);
     }
   }
 
@@ -404,10 +262,8 @@ export class FullpageComponent implements AfterViewInit, OnDestroy, IScrollEvent
   @HostListener('window:keydown.ArrowDown', ['$event'])
   @HostListener('window:keydown.space', ['$event'])
   public fullpageArrowDownEvent(event: KeyboardEvent) {
-    if (inViewport(this.activeSection)) {
-      if (!this.lockScrolling && this.checkFocus()) {
-        this.handlePageScrolling(event, ScrollDirection.Down);
-      }
+    if (!this.lockScrolling && this.checkFocus()) {
+      this.handlePageScrolling(event, ScrollDirection.Down);
     }
   }
 

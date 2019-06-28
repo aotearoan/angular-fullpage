@@ -3,15 +3,15 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { FullpageModule } from '@aotearoan/angular-fullpage';
 import { FullpageTestModule } from '../../../projects/aotearoan/angular-fullpage/src/lib/fullpage/fullpage-test.module';
 import { SectionModule } from '../section/section.module';
-import { PageComponent } from './page.component';
+import { SectionCComponent } from './section-c.component';
 
-describe('PageComponent', () => {
-  let component: PageComponent;
-  let fixture: ComponentFixture<PageComponent>;
+describe('SectionCComponent', () => {
+  let component: SectionCComponent;
+  let fixture: ComponentFixture<SectionCComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PageComponent ],
+      declarations: [ SectionCComponent ],
       imports: [
         FullpageModule,
         SectionModule,
@@ -23,7 +23,7 @@ describe('PageComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PageComponent);
+    fixture = TestBed.createComponent(SectionCComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

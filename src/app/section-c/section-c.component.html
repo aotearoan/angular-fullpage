@@ -1,21 +1,5 @@
-<ao-fullpage [sections]="sections">
-  <section class="fullpage-section" [id]="sections[0].url">
-    <app-section [section]="sections[0]">
-      <h1>A fullpage section</h1>
-      <p>
-        <a [routerLink]="'/'" [fragment]="'section-c'">Take me to #section-c</a>
-      </p>
-    </app-section>
-  </section>
-  <section class="fullpage-section" [id]="sections[1].url">
-    <app-section [section]="sections[1]">
-      <h1>A fullpage section with an input</h1>
-      <form>
-        <textarea rows="10" placeholder="Interaction with form controls should prevent keyboard scrolling"></textarea>
-      </form>
-    </app-section>
-  </section>
-  <section class="fullpage-section" [id]="sections[2].url">
+<ao-fullpage [sections]="sections" [sectionIndex]="2">
+  <section [id]="sections[2].url">
     <app-section [section]="sections[2]">
       <h1>A fullpage section longer than the page</h1>
       <p>Lorem ipsum dolor amet hella air plant live-edge jianbing, cray iPhone gluten-free tofu PBR&B venmo tumblr paleo chicharrones ennui truffaut. Brunch ramps succulents, kogi butcher literally kickstarter raw denim pok pok. Waistcoat quinoa deep v, actually kitsch street art hashtag. Pabst tumblr godard chartreuse jianbing XOXO, beard freegan before they sold out.</p>
@@ -38,12 +22,6 @@
       <p>Yuccie fashion axe fanny pack cold-pressed tumblr health goth mlkshk kitsch adaptogen craft beer street art. Sartorial post-ironic salvia cornhole kombucha green juice 90's, pinterest iPhone irony. Art party kickstarter williamsburg, 3 wolf moon helvetica kombucha austin neutra vice brooklyn. Skateboard shaman jean shorts meggings pug taiyaki offal selfies occupy taxidermy disrupt wayfarers ennui hexagon freegan. Narwhal cloud bread roof party readymade man braid. Cray truffaut af chartreuse.</p>
       <p>Echo park etsy squid typewriter pok pok cardigan. Raclette organic kogi tumeric direct trade put a bird on it. Keytar godard wolf deep v heirloom gochujang dreamcatcher cloud bread lyft umami scenester pork belly tofu. Street art lomo letterpress, disrupt gentrify banjo crucifix single-origin coffee brooklyn tofu meditation.</p>
       <p>Gastropub enamel pin flexitarian single-origin coffee, cloud bread banh mi cold-pressed umami tumeric mixtape narwhal stumptown. Narwhal meggings mlkshk authentic four loko fixie. Slow-carb salvia pabst, vaporware skateboard cloud bread fashion axe synth affogato sustainable pickled gochujang hot chicken chia everyday carry. Fashion axe truffaut 3 wolf moon PBR&B gentrify organic, distillery flannel tacos brooklyn tbh flexitarian.</p>
-    </app-section>
-  </section>
-  <section class="fullpage-section-fit-content" [id]="sections[3].url">
-    <app-section [section]="sections[3]">
-      <h1>A shorter fullpage section</h1>
-      <a [routerLink]="'/'">Back to top</a>
     </app-section>
   </section>
 </ao-fullpage>

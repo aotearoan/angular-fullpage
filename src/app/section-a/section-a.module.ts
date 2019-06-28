@@ -3,11 +3,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FullpageModule } from '@aotearoan/angular-fullpage';
 import { SectionModule } from '../section/section.module';
-import { PageComponent } from './page.component';
+import { SectionAComponent } from './section-a.component';
 
 @NgModule({
-  declarations: [PageComponent],
-  exports: [PageComponent],
+  declarations: [SectionAComponent],
+  exports: [SectionAComponent],
   imports: [
     CommonModule,
     SectionModule,
@@ -15,4 +15,4 @@ import { PageComponent } from './page.component';
     RouterModule,
   ],
 })
-export class PageModule { }
+export class SectionAModule { }

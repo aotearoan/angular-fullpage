@@ -2,13 +2,46 @@ html {
   scroll-behavior: smooth;
 }
 
-section {
-  width: 100vw;
-  height: 100vh;
-}
+::ng-deep {
+  h1 {
+    font-family: 'Avenir Next', sans-serif;
+    font-weight: 800;
+    font-size: 10vw;
+    color: #1B255D;
+    text-align: center;
+  }
 
-h1 {
-  font-family: Montserrat, sans-serif;
-  font-size: 72px;
-}
+  textarea {
+    width: 700px;
+    font-family: 'Avenir Next', serif;
+    font-size: 16px;
+    margin-bottom: 50px;
+  }
 
+  p {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 60%;
+  }
+
+  .section-a {
+    background-color: #F7CAC9;
+  }
+
+  .section-b {
+    background-color: #5F4B8B;
+  }
+
+  .section-c {
+    background-color: #FA7268;
+  }
+
+  .section-d {
+    background-color: #138D90;
+  }
+
+  section {
+    min-height: 100vh;
+    overflow-y: scroll;
+  }
+}

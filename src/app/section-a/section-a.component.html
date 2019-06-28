@@ -1,0 +1,10 @@
+<ao-fullpage [sections]="sections" [sectionIndex]="0">
+  <section [id]="sections[0].url">
+    <app-section [section]="sections[0]">
+      <h1>A fullpage section</h1>
+      <p>
+        <a [routerLink]="'/section-c'">Take me to /section-c</a>
+      </p>
+    </app-section>
+  </section>
+</ao-fullpage>
